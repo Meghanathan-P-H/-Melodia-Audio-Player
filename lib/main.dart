@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:melodia_audioplayer/Screens/splash.dart';
+import 'package:melodia_audioplayer/Screens/splash_screen.dart';
 
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Melodia Audioplayer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primaryColor: Colors.blue),
-      home:const splashScreen(),
+      home:const SplashScreen(),
     );
   }
 }
