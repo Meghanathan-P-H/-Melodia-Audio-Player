@@ -34,7 +34,7 @@ class _ScreenHomeState extends State<ScreenHome> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF28282F),
+          backgroundColor: const Color(0xFF28282F),
           type: BottomNavigationBarType.fixed,
           unselectedItemColor: Colors.grey,
           selectedItemColor: Colors.white,
@@ -43,7 +43,8 @@ class _ScreenHomeState extends State<ScreenHome> {
             setState(() {
               _selectIndex = index;
             });
-          },iconSize: 30,
+          },
+          iconSize: 30,
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.home_rounded), label: 'Home'),
@@ -54,6 +55,39 @@ class _ScreenHomeState extends State<ScreenHome> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.my_library_music_outlined), label: 'Playlist')
           ]),
+      body: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 2.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text(
+                'Find the best music\nfor your banger',
+                style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(15.0),
+              width: double.infinity,
+              height: 130,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                image:const DecorationImage(
+                    image: AssetImage('asset/images/BannerImage.jpg'),
+                    fit: BoxFit.fill),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
