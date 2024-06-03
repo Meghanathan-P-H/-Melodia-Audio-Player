@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -10,6 +11,7 @@ class ScreenHome extends StatefulWidget {
 
 class _ScreenHomeState extends State<ScreenHome> {
   int _selectIndex = 0;
+  final _audioQuery = OnAudioQuery();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,32 +99,37 @@ class _ScreenHomeState extends State<ScreenHome> {
                       color: Colors.white),
                 ),
               ),
-              ListView.builder(
-                physics:const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (((context, index) {
-                  Widget avatar;
-                  avatar = Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        image: const DecorationImage(
-                            image: AssetImage(
-                              'asset/images/musicimage.png',
-                            ),
-                            fit: BoxFit.cover),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ));
-                  return ListTile(
-                    leading: avatar,
-                    title: Text('name $index'),
-                    subtitle: const Text('Artist name'),
-                    trailing: IconButton(
-                        onPressed: () {}, icon: Icon(Icons.snapchat_rounded)),
-                  );
-                })),
-                itemCount: 10,
-              )
+              FutureBuilder<List<SongModel>>(
+                  future: _audioQuery.querySongs(
+                      sortType: null,
+                      orderType: OrderType.ASC_OR_SMALLER,
+                      uriType: UriType.EXTERNAL,
+                      ignoreCase: true),
+                  builder: (context, item) {
+                    if (item.data == null) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (item.data!.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'NO Songs Found',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                         itemBuilder: (context, index) {
+                           return ListItemWidget(index: index,title: item.data![index].displayNameWOExt,
+                            subtitle: item.data![index].artist ?? 'Unknown Artist');
+                         },
+                         itemCount: item.data!.length,
+                       );
+                    }
+                  })
             ],
           ),
         ),
