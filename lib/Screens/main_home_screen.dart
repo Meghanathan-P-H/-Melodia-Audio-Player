@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -55,37 +56,75 @@ class _ScreenHomeState extends State<ScreenHome> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.my_library_music_outlined), label: 'Playlist')
           ]),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 2.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(left: 20.0),
-              child: Text(
-                'Find the best music\nfor your banger',
-                style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+      body: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(15.0),
-              width: double.infinity,
-              height: 130,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                image:const DecorationImage(
-                    image: AssetImage('asset/images/BannerImage.jpg'),
-                    fit: BoxFit.fill),
+              const Padding(
+                padding: EdgeInsets.only(left: 20.0),
+                child: Text(
+                  'Find the best music\nfor your banger',
+                  style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
               ),
-            )
-          ],
+              Container(
+                margin: const EdgeInsets.all(15.0),
+                width: double.infinity,
+                height: 130,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  image: const DecorationImage(
+                      image: AssetImage('asset/images/BannerImage.jpg'),
+                      fit: BoxFit.fill),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 20.0),
+                child: Text(
+                  'All Songs',
+                  style: TextStyle(
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ),
+              ListView.builder(
+                physics:const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (((context, index) {
+                  Widget avatar;
+                  avatar = Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        image: const DecorationImage(
+                            image: AssetImage(
+                              'asset/images/musicimage.png',
+                            ),
+                            fit: BoxFit.cover),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ));
+                  return ListTile(
+                    leading: avatar,
+                    title: Text('name $index'),
+                    subtitle: const Text('Artist name'),
+                    trailing: IconButton(
+                        onPressed: () {}, icon: Icon(Icons.snapchat_rounded)),
+                  );
+                })),
+                itemCount: 10,
+              )
+            ],
+          ),
         ),
       ),
     );
