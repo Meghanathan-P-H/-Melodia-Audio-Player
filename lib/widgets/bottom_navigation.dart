@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:melodia_audioplayer/Screens/favoriteScreen.dart';
+import 'package:melodia_audioplayer/Screens/favorite_screen.dart';
 import 'package:melodia_audioplayer/Screens/main_home_screen.dart';
-import 'package:melodia_audioplayer/Screens/playListScreen.dart';
-import 'package:melodia_audioplayer/Screens/searchScreen.dart';
+import 'package:melodia_audioplayer/Screens/playlist_screen.dart';
+import 'package:melodia_audioplayer/Screens/search_screen.dart';
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});
