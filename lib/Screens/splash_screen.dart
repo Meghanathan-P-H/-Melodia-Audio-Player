@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:melodia_audioplayer/Screens/main_home_screen.dart';
+import 'package:melodia_audioplayer/widgets/bottom_navigation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(
         const Duration(seconds: 3),
         () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const ScreenHome())));
+            MaterialPageRoute(builder: (context) => const MainHome())));
   }
   void requestPermission() {
     Permission.storage.request();

@@ -10,7 +10,6 @@ class ScreenHome extends StatefulWidget {
 }
 
 class _ScreenHomeState extends State<ScreenHome> {
-  int _selectIndex = 0;
   final _audioQuery = OnAudioQuery();
   @override
   Widget build(BuildContext context) {
@@ -36,28 +35,6 @@ class _ScreenHomeState extends State<ScreenHome> {
               ))
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFF28282F),
-          type: BottomNavigationBarType.fixed,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.white,
-          currentIndex: _selectIndex,
-          onTap: (int index) {
-            setState(() {
-              _selectIndex = index;
-            });
-          },
-          iconSize: 30,
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded), label: 'Home'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search_rounded), label: 'Search'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_border_rounded), label: 'Favorite'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.my_library_music_outlined), label: 'Playlist')
-          ]),
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
@@ -122,12 +99,15 @@ class _ScreenHomeState extends State<ScreenHome> {
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                         itemBuilder: (context, index) {
-                           return ListItemWidget(index: index,title: item.data![index].displayNameWOExt,
-                            subtitle: item.data![index].artist ?? 'Unknown Artist');
-                         },
-                         itemCount: item.data!.length,
-                       );
+                        itemBuilder: (context, index) {
+                          return ListItemWidget(
+                              index: index,
+                              title: item.data![index].displayNameWOExt,
+                              subtitle:
+                                  item.data![index].artist ?? 'Unknown Artist');
+                        },
+                        itemCount: item.data!.length,
+                      );
                     }
                   })
             ],
