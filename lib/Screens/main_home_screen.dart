@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
+import 'package:melodia_audioplayer/Screens/settings_drawer.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class ScreenHome extends StatefulWidget {
@@ -12,6 +15,8 @@ class ScreenHome extends StatefulWidget {
 class _ScreenHomeState extends State<ScreenHome> {
   final _audioQuery = OnAudioQuery();
   Future<List<SongModel>>? _futureSong;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +41,7 @@ class _ScreenHomeState extends State<ScreenHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -49,7 +55,9 @@ class _ScreenHomeState extends State<ScreenHome> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
               icon: const Icon(
                 Icons.settings_suggest_outlined,
                 color: Colors.white,
@@ -57,6 +65,7 @@ class _ScreenHomeState extends State<ScreenHome> {
               ))
         ],
       ),
+      drawer:const SettingsDrawer(),
       body: RefreshIndicator(
         onRefresh: _refreshSongs,
         child: SingleChildScrollView(
