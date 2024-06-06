@@ -17,7 +17,7 @@ class _MainHomeState extends State<MainHome> {
     ScreenHome(),
     ScreenSearch(),
     ScreenFovorite(),
-    ScreenPlayList()
+    ScreenPlayList(),
   ];
   void _onItemTapped(int index) {
     setState(() {

@@ -62,6 +62,9 @@ flutter:
     - asset/images/BannerImage.jpg
     - asset/images/musicimage.png
     - asset/images/serchscreenimagebc.png
+    - asset/images/playingdefaultimg.jpg
+    - asset/images/girl-1990347_1280.jpg
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
