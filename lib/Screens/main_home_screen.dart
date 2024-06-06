@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
 import 'package:melodia_audioplayer/Screens/settings_drawer.dart';
 import 'package:on_audio_query/on_audio_query.dart';

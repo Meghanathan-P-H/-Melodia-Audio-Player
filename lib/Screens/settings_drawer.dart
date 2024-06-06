@@ -78,7 +78,166 @@ class SettingsDrawer extends StatelessWidget {
                         fontSize: 18),
                   ),
                   onTap: () {},
-                )
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'SETTINGS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                ListTile(
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.all(9.0),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints.tightFor(
+                              height: 34,
+                              width: 35,
+                            ),
+                            child: const Icon(
+                              Icons.auto_stories_outlined,
+                              size: 35,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: const Text(
+                    'ABOUT US',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18),
+                  ),
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 19,
+                ),
+                ListTile(
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.all(9.0),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints.tightFor(
+                              height: 34,
+                              width: 35,
+                            ),
+                            child: const Icon(
+                              Icons.privacy_tip_outlined,
+                              size: 35,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: const Text(
+                    'PRIVACY POLICY',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18),
+                  ),
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                ListTile(
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.all(9.0),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints.tightFor(
+                              height: 34,
+                              width: 35,
+                            ),
+                            child: const Icon(
+                              Icons.info_outline,
+                              size: 35,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: const Text(
+                    'TERMS & CONDITION',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18),
+                  ),
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                ListTile(
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.all(9.0),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints.tightFor(
+                              height: 34,
+                              width: 35,
+                            ),
+                            child: const Icon(
+                              Icons.star_border,
+                              size: 35,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: const Text(
+                    'RATE US',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18),
+                  ),
+                  onTap: () {},
+                ),
               ],
             ),
           ),
