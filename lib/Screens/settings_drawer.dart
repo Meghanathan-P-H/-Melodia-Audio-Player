@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:melodia_audioplayer/Screens/about_screen.dart';
+import 'package:melodia_audioplayer/Screens/audiorecording_screen.dart';
+import 'package:melodia_audioplayer/Screens/privacy_policy.dart';
+import 'package:melodia_audioplayer/Screens/terms_and_conditionscreen.dart';
 
 class SettingsDrawer extends StatelessWidget {
   const SettingsDrawer({super.key});
@@ -77,7 +81,10 @@ class SettingsDrawer extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 18),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ScreenAudioRecord()));
+                  },
                 ),
                 const SizedBox(
                   height: 20,
@@ -125,7 +132,10 @@ class SettingsDrawer extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 18),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const AboutScreen()));
+                  },
                 ),
                 const SizedBox(
                   height: 19,
@@ -162,7 +172,10 @@ class SettingsDrawer extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 18),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen()));
+                  },
                 ),
                 const SizedBox(
                   height: 15,
@@ -199,7 +212,10 @@ class SettingsDrawer extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 18),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TermsAndConditionScreen()));
+                  },
                 ),
                 const SizedBox(
                   height: 15,
