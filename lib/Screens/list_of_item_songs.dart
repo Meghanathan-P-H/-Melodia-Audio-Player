@@ -28,11 +28,6 @@ class ListItemWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${index + 1}',
-                style: const TextStyle(color: Colors.white, fontSize: 18),
-              ),
-              const SizedBox(width: 10),
               Container(
                 width: 50,
                 height: 50,

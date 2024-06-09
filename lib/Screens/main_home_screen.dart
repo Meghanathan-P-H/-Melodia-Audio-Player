@@ -41,109 +41,136 @@ class _ScreenHomeState extends State<ScreenHome> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Transform.translate(
-          offset: const Offset(15, 0),
-          child: const CircleAvatar(
-            backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage('asset/images/MelodiaLogo.png'),
-            radius: 50,
-          ),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
-              icon: const Icon(
-                Icons.settings_suggest_outlined,
-                color: Colors.white,
-                size: 45,
-              ))
-        ],
-      ),
-      drawer:const SettingsDrawer(),
+      appBar: _buildAppbar(),
+      drawer: const SettingsDrawer(),
       body: RefreshIndicator(
         onRefresh: _refreshSongs,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 2.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    'Find the best music\nfor your banger',
-                    style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(15.0),
-                  width: double.infinity,
-                  height: 130,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    image: const DecorationImage(
-                        image: AssetImage('asset/images/BannerImage.jpg'),
-                        fit: BoxFit.fill),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    'All Songs',
-                    style: TextStyle(
-                        fontSize: 26.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
-                FutureBuilder<List<SongModel>>(
-                    future: _futureSong,
-                    builder: (context, item) {
-                      if (item.data == null) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (item.data!.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            'NO Songs Found',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        );
-                      } else {
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListItemWidget(
-                                index: index,
-                                title: item.data![index].displayNameWOExt,
-                                subtitle: item.data![index].artist ??
-                                    'Unknown Artist');
-                          },
-                          itemCount: item.data!.length,
-                        );
-                      }
-                    })
-              ],
+        child: _buildBody(),
+      ),
+    );
+  }
+
+  //Build the AppBar
+  AppBar _buildAppbar() {
+    return AppBar(
+      backgroundColor: Colors.black,
+      leading: Transform.translate(
+        offset: const Offset(15, 0),
+        child: const CircleAvatar(
+          backgroundColor: Colors.transparent,
+          backgroundImage: AssetImage('asset/images/MelodiaLogo.png'),
+          radius: 50,
+        ),
+      ),
+      actions: [
+        IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+            icon: const Icon(
+              Icons.settings_suggest_outlined,
+              color: Colors.white,
+              size: 45,
+            ))
+      ],
+    );
+  }
+
+  //Build the Body of the Screen
+  Widget _buildBody() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 2.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 10,
             ),
-          ),
+            _buildHeaderText(),
+            _buildBannerImage(),
+            _buildSectionTitle('All Songs'),
+            _buildSongList()
+          ],
         ),
       ),
     );
+  }
+
+  //Build the Header Text
+  Widget _buildHeaderText() {
+    return const Padding(
+      padding: EdgeInsets.only(left: 20.0),
+      child: Text(
+        'Find the best music\nfor your banger',
+        style: TextStyle(
+            fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+
+  //Build the banner Image
+  Widget _buildBannerImage() {
+    return Container(
+      margin: const EdgeInsets.all(15.0),
+      width: double.infinity,
+      height: 130,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        image: const DecorationImage(
+            image: AssetImage('asset/images/BannerImage.jpg'),
+            fit: BoxFit.fill),
+      ),
+    );
+  }
+
+  // Build section title
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 26.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  // Build the list of songs
+  Widget _buildSongList() {
+    return FutureBuilder<List<SongModel>>(
+        future: _futureSong,
+        builder: (context, item) {
+          if (item.data == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (item.data!.isEmpty) {
+            return const Center(
+              child: Text(
+                'NO Songs Found',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListItemWidget(
+                    index: index,
+                    title: item.data![index].displayNameWOExt,
+                    subtitle: item.data![index].artist ?? 'Unknown Artist');
+              },
+              itemCount: item.data!.length,
+            );
+          }
+        });
   }
 }

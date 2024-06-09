@@ -12,13 +12,18 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
+
   int _selectedIndex = 0;
-  final List<Widget> _screen = const[
+
+//List of screens corresponding to each item in bottom navigation
+  final List<Widget> _screens = const[
     ScreenHome(),
     ScreenSearch(),
     ScreenFovorite(),
     ScreenPlayList(),
   ];
+
+//List of screens corresponding to each item
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -55,9 +60,10 @@ class _MainHomeState extends State<MainHome> {
           ),
         ],
       ),
+// // Display the currently selected screen      
       body: IndexedStack(
         index: _selectedIndex,
-        children: _screen        ,
+        children: _screens        ,
       ),
     );
   }
