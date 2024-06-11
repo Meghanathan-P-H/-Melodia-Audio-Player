@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
 import 'package:melodia_audioplayer/Screens/settings_drawer.dart';
+import 'package:melodia_audioplayer/db_function/database_functions.dart';
+import 'package:melodia_audioplayer/db_model/db_model.dart';
+import 'package:melodia_audioplayer/screens/audio_query.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class ScreenHome extends StatefulWidget {
@@ -11,29 +14,27 @@ class ScreenHome extends StatefulWidget {
 }
 
 class _ScreenHomeState extends State<ScreenHome> {
-  final _audioQuery = OnAudioQuery();
-  Future<List<SongModel>>? _futureSong;
+  final SongFetcher _songFetcher = SongFetcher();
+  Future<List<SongMusic>>? _futureSongs;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    _futureSong = _audioQuery.querySongs(
-        sortType: null,
-        orderType: OrderType.ASC_OR_SMALLER,
-        uriType: UriType.EXTERNAL,
-        ignoreCase: true);
+    _loadSongs();
+  }
+
+  Future<void> _loadSongs() async {
+    List<SongModel> fetchedSongs = await _songFetcher.fetchSongs();
+    await allSongs(futureSong: fetchedSongs);
+    setState(() {
+      _futureSongs = getAllSongsFromDatabase();
+    });
   }
 
   Future<void> _refreshSongs() async {
     await Future.delayed(const Duration(seconds: 1));
-    setState(() {
-      _futureSong = _audioQuery.querySongs(
-          sortType: null,
-          orderType: OrderType.ASC_OR_SMALLER,
-          uriType: UriType.EXTERNAL,
-          ignoreCase: true);
-    });
+    await _loadSongs();
   }
 
   @override
@@ -143,14 +144,14 @@ class _ScreenHomeState extends State<ScreenHome> {
 
   // Build the list of songs
   Widget _buildSongList() {
-    return FutureBuilder<List<SongModel>>(
-        future: _futureSong,
-        builder: (context, item) {
-          if (item.data == null) {
+    return FutureBuilder<List<SongMusic>>(
+        future: _futureSongs,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (item.data!.isEmpty) {
+          } else if (snapshot.data == null || snapshot.data!.isEmpty) {
             return const Center(
               child: Text(
                 'NO Songs Found',
@@ -165,10 +166,10 @@ class _ScreenHomeState extends State<ScreenHome> {
               itemBuilder: (context, index) {
                 return ListItemWidget(
                     index: index,
-                    title: item.data![index].displayNameWOExt,
-                    subtitle: item.data![index].artist ?? 'Unknown Artist');
+                    title: snapshot.data![index].name,
+                    subtitle: snapshot.data![index].artist);
               },
-              itemCount: item.data!.length,
+              itemCount: snapshot.data!.length,
             );
           }
         });
