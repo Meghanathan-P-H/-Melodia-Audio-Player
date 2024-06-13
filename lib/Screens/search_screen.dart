@@ -23,6 +23,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
 
   Future<void> fetchSongs() async {
     final songs = await getAllSongsFromDatabase();
+    // ignore: avoid_print
     print("Fetched songs: ${songs.length}");
     setState(() {
       allMusics = songs;
@@ -55,6 +56,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
       });
     }
 
+    // ignore: avoid_print
     print("Filtered songs: ${displayedMusics.length}");
   }
 
@@ -137,7 +139,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
   Widget _buildSongList() {
     return Expanded(
       child: displayedMusics.isEmpty
-          ?const Center(
+          ? const Center(
               child:
                   Text('No songs found', style: TextStyle(color: Colors.white)))
           : ListView.builder(
@@ -160,11 +162,13 @@ class _ScreenSearchState extends State<ScreenSearch> {
                   title: Text(
                     song.name,
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis,
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(
                     song.artist,
-                    style: const TextStyle(color: Colors.white70),overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white70),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.more_vert, color: Colors.white),
