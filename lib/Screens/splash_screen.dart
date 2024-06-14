@@ -15,23 +15,32 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    // _initialize();
+    versionChekerAD();
   }
-// Function handle the Intialization
-  Future<void> _initialize() async {
-    await _requestPermission();
-    _navigateToHome();
-  }
-// Function to navigate to the home screen
-  Future<void> _requestPermission() async {
-    await Permission.storage.request();
-  }
-// Function to navigate to the home screen
-  void _navigateToHome() {
-    Timer(
-        const Duration(seconds: 3),
-        () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainHome())));
+
+  Future<void> versionChekerAD() async {
+    PermissionStatus permissionStatus;
+    PermissionStatus result;
+    final status = await Permission.audio.status;
+    permissionStatus = await Permission.audio.request();
+    debugPrint(status.toString());
+    if (permissionStatus.isGranted) {
+      await Future.delayed(const Duration(seconds: 3));
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainHome()));
+    } else {
+      result = await Permission.audio.request();
+      if (result.isGranted) {
+        await Future.delayed(const Duration(seconds: 3));
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MainHome()));
+      } else if (result.isPermanentlyDenied) {
+        openAppSettings();
+      }
+    }
   }
 
   @override

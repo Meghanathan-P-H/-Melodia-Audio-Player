@@ -3,7 +3,7 @@ import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
 import 'package:melodia_audioplayer/Screens/settings_drawer.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
-import 'package:melodia_audioplayer/screens/audio_query.dart';
+import 'package:melodia_audioplayer/screens/permission_provider.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class ScreenHome extends StatefulWidget {
