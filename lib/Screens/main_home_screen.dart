@@ -143,35 +143,36 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   // Build the list of songs
-  Widget _buildSongList() {
-    return FutureBuilder<List<SongMusic>>(
-        future: _futureSongs,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                'NO Songs Found',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-            );
-          } else {
-            return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListItemWidget(
-                    index: index,
-                    title: snapshot.data![index].name,
-                    subtitle: snapshot.data![index].artist);
-              },
-              itemCount: snapshot.data!.length,
-            );
-          }
-        });
-  }
+  // Build the list of songs
+Widget _buildSongList() {
+  return FutureBuilder<List<SongMusic>>(
+      future: _futureSongs,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'NO Songs Found',
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+          );
+        } else {
+          return ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListItemWidget(
+                  index: index,
+                  song: snapshot.data![index]);
+            },
+            itemCount: snapshot.data!.length,
+          );
+        }
+      });
+}
+
 }
