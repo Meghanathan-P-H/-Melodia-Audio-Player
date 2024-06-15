@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:melodia_audioplayer/screens/permission_provider.dart';
 import 'package:melodia_audioplayer/widgets/bottom_navigation.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,37 +11,22 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final SongFetcher _songFetcher = SongFetcher();
   @override
   void initState() {
     super.initState();
-    // _initialize();
-    versionChekerAD();
+    _initialize();
   }
-
-  Future<void> versionChekerAD() async {
-    PermissionStatus permissionStatus;
-    PermissionStatus result;
-    final status = await Permission.audio.status;
-    permissionStatus = await Permission.audio.request();
-    debugPrint(status.toString());
-    if (permissionStatus.isGranted) {
+    Future<void> _initialize() async {
+    bool permissionGranted = await _songFetcher.requestAudioPermission();
+    if (permissionGranted) {
       await Future.delayed(const Duration(seconds: 3));
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const MainHome()));
-    } else {
-      result = await Permission.audio.request();
-      if (result.isGranted) {
-        await Future.delayed(const Duration(seconds: 3));
-        // ignore: use_build_context_synchronously
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainHome()));
-      } else if (result.isPermanentlyDenied) {
-        openAppSettings();
-      }
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
