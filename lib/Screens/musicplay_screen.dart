@@ -4,11 +4,10 @@ import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
 class ScreenMusicPlay extends StatefulWidget {
- 
-
   @override
+  // ignore: library_private_types_in_public_api
   _ScreenMusicPlayState createState() => _ScreenMusicPlayState();
-   final SongMusic song;
+  final SongMusic song;
 
   const ScreenMusicPlay({super.key, required this.song});
 }
@@ -16,8 +15,11 @@ class ScreenMusicPlay extends StatefulWidget {
 class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
-  bool _isSuffling = false;
+  bool _isShuffling = false;
   bool _isLooping = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -30,6 +32,18 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     _audioPlayer.play();
     setState(() {
       _isPlaying = true;
+    });
+    // Listen for changes in the audio player's duration
+    _audioPlayer.durationStream.listen((newDuration) {
+      setState(() {
+        duration = newDuration ?? Duration.zero;
+      });
+    });
+    // Listen for changes in the audio player's position
+    _audioPlayer.positionStream.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
     });
   }
 
@@ -46,9 +60,9 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
 
   void _toggleShuffle() {
     setState(() {
-      _isSuffling = !_isSuffling;
+      _isShuffling = !_isShuffling;
     });
-    _audioPlayer.setShuffleModeEnabled(_isSuffling);
+    _audioPlayer.setShuffleModeEnabled(_isShuffling);
   }
 
   void _toggleLoop() {
@@ -57,6 +71,29 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     });
     _audioPlayer.setLoopMode(_isLooping ? LoopMode.one : LoopMode.off);
   }
+
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return [minutes, seconds].join(':');
+  }
+  
+//   void skipNextSong() async {
+//   int nextIndex = (currentIndex + 1) % song.length;
+//   await _playSong(index: nextIndex);
+//   setState(() {
+//     currentIndex = nextIndex;
+//   });
+// }
+
+// void skipPreviousSong() async {
+//   int prevIndex = (currentIndex - 1 + song.length) % song.length;
+//   await _playSong(index: prevIndex);
+//   setState(() {
+//     currentIndex = prevIndex;
+//   });
+// }
 
   @override
   Widget build(BuildContext context) {
@@ -100,25 +137,31 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   }
 
   Widget _buildBody() {
-    return Column(
-      children: [
-        const SizedBox(height: 70),
-        _buildAlbumArt(),
-        const SizedBox(height: 20),
-        _buildSongInfo(),
-        _buildControls()
-      ],
-    );
-  }
+  final mediaQuery = MediaQuery.of(context);
+  final screenHeight = mediaQuery.size.height;
+  final screenWidth = mediaQuery.size.width;
 
-  Widget _buildAlbumArt() {
+  return Column(
+    children: [
+      SizedBox(height: screenHeight * 0.05), // 5% of screen height
+      _buildAlbumArt(screenWidth),
+      SizedBox(height: screenHeight * 0.03), // 3% of screen height
+      _buildSongInfo(),
+      const Spacer(),
+      _buildControls(screenHeight, screenWidth),
+      SizedBox(height: screenHeight * 0.02), // 2% of screen height
+    ],
+  );
+}
+
+  Widget _buildAlbumArt(double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
       child: Container(
         height: 300,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          image: const DecorationImage(
+          borderRadius: BorderRadius.circular(20),
+          image:const DecorationImage(
             image: AssetImage('asset/images/playingdefaultimg.jpg'),
             fit: BoxFit.cover,
           ),
@@ -137,48 +180,84 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
 
   Widget _buildSongInfo() {
     return Padding(
-      padding: const EdgeInsets.only(left: 30.0),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.song.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.song.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis,
             ),
-            Text(
-              widget.song.artist,
-              style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 18,
-              ),
+          ),
+          Text(
+            widget.song.artist,
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 18,
+              overflow: TextOverflow.clip,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildControls() {
+  Widget _buildControls(double screenHeight,double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
       child: Column(
         children: [
+          SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor:const Color(0xFF18D518), // Optional: Makes the track transparent
+            inactiveTrackColor: Colors.grey, // Optional: Changes the inactive track color
+            trackShape:const RectangularSliderTrackShape(), // Optional: Customizes the shape of the track
+            trackHeight: 2.0, // Optional: Adjusts the height of the track
+            thumbColor:const Color(0xFF18D518), // Sets the thumb color to green
+            thumbShape:const RoundSliderThumbShape(enabledThumbRadius: 10), // Optional: Customizes the thumb shape
+            overlayColor:const Color(0xFF18D518).withAlpha(32), // Optional: Changes the overlay color around the thumb
+            overlayShape:const RoundSliderOverlayShape(overlayRadius: 5), // Optional: Customizes the overlay shape
+          ),
+          child: Slider(
+            min: 0,
+            max: duration.inSeconds.toDouble(),
+            value: position.inSeconds.toDouble(),
+            onChanged: (value) async {
+              final position = Duration(seconds: value.toInt());
+              await _audioPlayer.seek(position);
+            },
+          ),
+        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  formatTime(position),
+                  style: const TextStyle(color: Colors.white),
+                ),
+                Text(
+                  formatTime(duration - position),
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(_isLooping ? Icons.repeat_one : Icons.repeat),
+                icon: Icon(_isLooping ? Icons.repeat_one : Icons.repeat_rounded),
                 color: Colors.white,
                 onPressed: _toggleLoop,
               ),
               IconButton(
-                icon: Icon(_isSuffling ? Icons.shuffle_on : Icons.shuffle),
+                icon: Icon(_isShuffling ? Icons.shuffle_on : Icons.shuffle_rounded),
                 color: Colors.white,
                 onPressed: _toggleShuffle,
               ),
@@ -194,8 +273,8 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 onPressed: () {}, // Add functionality if needed
               ),
               IconButton(
-                icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-                color: Colors.white,
+                icon: Icon(_isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded),
+                color:const Color(0xFF18D518),
                 iconSize: 60,
                 onPressed: _playPause,
               ),
