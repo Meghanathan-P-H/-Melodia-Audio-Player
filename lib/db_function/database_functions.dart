@@ -32,7 +32,9 @@ Future<void>allSongs({required List<SongModel> futureSong}) async {
   }
 }
 Future<List<SongMusic>> getAllSongsFromDatabase() async {
-    final songsDatabase = await Hive.openBox<SongMusic>('music_db');
-    return songsDatabase.values.toList();
-    }
+  final songsDatabase = await Hive.openBox<SongMusic>('music_db');
+  final songsList = songsDatabase.values.toList();
+  songsList.sort((a, b) => a.musicid.compareTo(b.musicid));
+  return songsList;
+}
 

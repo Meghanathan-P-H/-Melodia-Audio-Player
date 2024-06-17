@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
@@ -20,11 +21,13 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   int currentIndex = 0;
+  late SongMusic currentSong;
 
   @override
   void initState() {
     super.initState();
-    _playSong(widget.song);
+   currentSong = widget.song;
+    _playSong(currentSong);
   }
 
   Future<void> _playSong(SongMusic song) async {
@@ -32,6 +35,8 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     _audioPlayer.play();
     setState(() {
       _isPlaying = true;
+      currentSong = song;
+      
     });
     // Listen for changes in the audio player's duration
     _audioPlayer.durationStream.listen((newDuration) {
@@ -78,22 +83,22 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return [minutes, seconds].join(':');
   }
-  
-//   void skipNextSong() async {
-//   int nextIndex = (currentIndex + 1) % song.length;
-//   await _playSong(index: nextIndex);
-//   setState(() {
-//     currentIndex = nextIndex;
-//   });
-// }
 
-// void skipPreviousSong() async {
-//   int prevIndex = (currentIndex - 1 + song.length) % song.length;
-//   await _playSong(index: prevIndex);
-//   setState(() {
-//     currentIndex = prevIndex;
-//   });
-// }
+  void _playNextSong() async {
+    final songs = await getAllSongsFromDatabase();
+    if (currentIndex < songs.length - 1) {
+      currentIndex++;
+      _playSong(songs[currentIndex]);
+    } 
+  }
+
+  void _playPreviousSong() async {
+    final songs = await getAllSongsFromDatabase();
+    if (currentIndex > 0) {
+      currentIndex--;
+      _playSong(songs[currentIndex]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,22 +142,22 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   }
 
   Widget _buildBody() {
-  final mediaQuery = MediaQuery.of(context);
-  final screenHeight = mediaQuery.size.height;
-  final screenWidth = mediaQuery.size.width;
+    final mediaQuery = MediaQuery.of(context);
+    final screenHeight = mediaQuery.size.height;
+    final screenWidth = mediaQuery.size.width;
 
-  return Column(
-    children: [
-      SizedBox(height: screenHeight * 0.05), // 5% of screen height
-      _buildAlbumArt(screenWidth),
-      SizedBox(height: screenHeight * 0.03), // 3% of screen height
-      _buildSongInfo(),
-      const Spacer(),
-      _buildControls(screenHeight, screenWidth),
-      SizedBox(height: screenHeight * 0.02), // 2% of screen height
-    ],
-  );
-}
+    return Column(
+      children: [
+        SizedBox(height: screenHeight * 0.05), // 5% of screen height
+        _buildAlbumArt(screenWidth),
+        SizedBox(height: screenHeight * 0.03), // 3% of screen height
+        _buildSongInfo(),
+        const Spacer(),
+        _buildControls(screenHeight, screenWidth),
+        SizedBox(height: screenHeight * 0.02), // 2% of screen height
+      ],
+    );
+  }
 
   Widget _buildAlbumArt(double screenWidth) {
     return Padding(
@@ -161,7 +166,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
         height: 300,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          image:const DecorationImage(
+          image: const DecorationImage(
             image: AssetImage('asset/images/playingdefaultimg.jpg'),
             fit: BoxFit.cover,
           ),
@@ -185,7 +190,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.song.name,
+            currentSong.name,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -194,7 +199,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
             ),
           ),
           Text(
-            widget.song.artist,
+            currentSong.artist,
             style: TextStyle(
               color: Colors.grey[400],
               fontSize: 18,
@@ -206,32 +211,41 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     );
   }
 
-  Widget _buildControls(double screenHeight,double screenWidth) {
+  Widget _buildControls(double screenHeight, double screenWidth) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
+      padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
       child: Column(
         children: [
           SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor:const Color(0xFF18D518), // Optional: Makes the track transparent
-            inactiveTrackColor: Colors.grey, // Optional: Changes the inactive track color
-            trackShape:const RectangularSliderTrackShape(), // Optional: Customizes the shape of the track
-            trackHeight: 2.0, // Optional: Adjusts the height of the track
-            thumbColor:const Color(0xFF18D518), // Sets the thumb color to green
-            thumbShape:const RoundSliderThumbShape(enabledThumbRadius: 10), // Optional: Customizes the thumb shape
-            overlayColor:const Color(0xFF18D518).withAlpha(32), // Optional: Changes the overlay color around the thumb
-            overlayShape:const RoundSliderOverlayShape(overlayRadius: 5), // Optional: Customizes the overlay shape
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: const Color(
+                  0xFF18D518), // Optional: Makes the track transparent
+              inactiveTrackColor:
+                  Colors.grey, // Optional: Changes the inactive track color
+              trackShape:
+                  const RectangularSliderTrackShape(), // Optional: Customizes the shape of the track
+              trackHeight: 2.0, // Optional: Adjusts the height of the track
+              thumbColor:
+                  const Color(0xFF18D518), // Sets the thumb color to green
+              thumbShape: const RoundSliderThumbShape(
+                  enabledThumbRadius:
+                      10), // Optional: Customizes the thumb shape
+              overlayColor: const Color(0xFF18D518).withAlpha(
+                  32), // Optional: Changes the overlay color around the thumb
+              overlayShape: const RoundSliderOverlayShape(
+                  overlayRadius: 5), // Optional: Customizes the overlay shape
+            ),
+            child: Slider(
+              min: 0,
+              max: duration.inSeconds.toDouble(),
+              value: position.inSeconds.toDouble(),
+              onChanged: (value) async {
+                final position = Duration(seconds: value.toInt());
+                await _audioPlayer.seek(position);
+              },
+            ),
           ),
-          child: Slider(
-            min: 0,
-            max: duration.inSeconds.toDouble(),
-            value: position.inSeconds.toDouble(),
-            onChanged: (value) async {
-              final position = Duration(seconds: value.toInt());
-              await _audioPlayer.seek(position);
-            },
-          ),
-        ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -252,12 +266,14 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(_isLooping ? Icons.repeat_one : Icons.repeat_rounded),
+                icon:
+                    Icon(_isLooping ? Icons.repeat_one : Icons.repeat_rounded),
                 color: Colors.white,
                 onPressed: _toggleLoop,
               ),
               IconButton(
-                icon: Icon(_isShuffling ? Icons.shuffle_on : Icons.shuffle_rounded),
+                icon: Icon(
+                    _isShuffling ? Icons.shuffle_on : Icons.shuffle_rounded),
                 color: Colors.white,
                 onPressed: _toggleShuffle,
               ),
@@ -270,11 +286,13 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 icon: const Icon(Icons.skip_previous),
                 color: Colors.white,
                 iconSize: 40,
-                onPressed: () {}, // Add functionality if needed
+                onPressed: _playPreviousSong,
               ),
               IconButton(
-                icon: Icon(_isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded),
-                color:const Color(0xFF18D518),
+                icon: Icon(_isPlaying
+                    ? Icons.pause_circle_filled_rounded
+                    : Icons.play_circle_fill_rounded),
+                color: const Color(0xFF18D518),
                 iconSize: 60,
                 onPressed: _playPause,
               ),
@@ -282,7 +300,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 icon: const Icon(Icons.skip_next),
                 color: Colors.white,
                 iconSize: 40,
-                onPressed: () {}, // Add functionality if needed
+                onPressed: _playNextSong,
               ),
             ],
           ),

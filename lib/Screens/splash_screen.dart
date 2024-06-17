@@ -11,7 +11,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final SongFetcher _songFetcher = SongFetcher();
+  final SongFetcher _songFetcher = SongFetcher(); 
   @override
   void initState() {
     super.initState();
