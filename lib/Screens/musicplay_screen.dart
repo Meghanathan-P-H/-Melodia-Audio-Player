@@ -148,7 +148,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
 
     return Column(
       children: [
-        SizedBox(height: screenHeight * 0.05), // 5% of screen height
+        SizedBox(height: screenHeight * 0.05),
         _buildAlbumArt(screenWidth),
         SizedBox(height: screenHeight * 0.03), // 3% of screen height
         _buildSongInfo(),
@@ -220,21 +220,21 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(
-                  0xFF18D518), // Optional: Makes the track transparent
+                  0xFF18D518),
               inactiveTrackColor:
-                  Colors.grey, // Optional: Changes the inactive track color
+                  Colors.grey,
               trackShape:
-                  const RectangularSliderTrackShape(), // Optional: Customizes the shape of the track
-              trackHeight: 2.0, // Optional: Adjusts the height of the track
+                  const RectangularSliderTrackShape(), 
+              trackHeight: 2.0, 
               thumbColor:
-                  const Color(0xFF18D518), // Sets the thumb color to green
+                  const Color(0xFF18D518),
               thumbShape: const RoundSliderThumbShape(
                   enabledThumbRadius:
-                      10), // Optional: Customizes the thumb shape
+                      10),
               overlayColor: const Color(0xFF18D518).withAlpha(
-                  32), // Optional: Changes the overlay color around the thumb
+                  32),
               overlayShape: const RoundSliderOverlayShape(
-                  overlayRadius: 5), // Optional: Customizes the overlay shape
+                  overlayRadius: 5),
             ),
             child: Slider(
               min: 0,
@@ -273,7 +273,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
               ),
               IconButton(
                 icon: Icon(
-                    _isShuffling ? Icons.shuffle_on : Icons.shuffle_rounded),
+                    _isShuffling ? Icons.shuffle_on_outlined : Icons.shuffle_rounded),
                 color: Colors.white,
                 onPressed: _toggleShuffle,
               ),
