@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -38,3 +39,20 @@ Future<List<SongMusic>> getAllSongsFromDatabase() async {
   return songsList;
 }
 
+void likeDbFuction(SongMusic fav) async {
+  final songDb = await Hive.openBox<SongMusic>('song_db');
+  SongMusic song = songDb.values.firstWhere((song) => song.musicid == fav.musicid);
+  song.islike = !song.islike;
+  songDb.put(song.key, song);
+}
+
+Future<List<SongMusic>> favoriteSongList() async {
+  List<SongMusic> songs = await getAllSongsFromDatabase();
+  List<SongMusic> favSongs = songs.where((song) {
+    return song.islike == true;
+  }).toList();
+  for (int i = 0; i < favSongs.length; i++) {
+    debugPrint('hil;j ${favSongs[i].name}');
+  }
+  return favSongs;
+}
