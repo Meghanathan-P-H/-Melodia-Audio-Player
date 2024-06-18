@@ -22,11 +22,20 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   Duration position = Duration.zero;
   int currentIndex = 0;
   late SongMusic currentSong;
+  List<SongMusic> songList = [];
+  List<SongMusic> shuffledSongList = [];
 
   @override
   void initState() {
     super.initState();
-   currentSong = widget.song;
+    currentSong = widget.song;
+    _initializeSongs();
+  }
+
+  Future<void> _initializeSongs() async {
+    songList = await getAllSongsFromDatabase();
+    shuffledSongList = List.from(songList)..shuffle();
+    currentIndex = songList.indexOf(currentSong);
     _playSong(currentSong);
   }
 
@@ -36,7 +45,6 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     setState(() {
       _isPlaying = true;
       currentSong = song;
-      
     });
     // Listen for changes in the audio player's duration
     _audioPlayer.durationStream.listen((newDuration) {
@@ -49,6 +57,12 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       setState(() {
         position = newPosition;
       });
+    });
+
+    _audioPlayer.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.completed) {
+        _playNextSong();
+      }
     });
   }
 
@@ -67,7 +81,12 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     setState(() {
       _isShuffling = !_isShuffling;
     });
-    _audioPlayer.setShuffleModeEnabled(_isShuffling);
+    if (_isShuffling) {
+      shuffledSongList.shuffle();
+      currentIndex = shuffledSongList.indexOf(currentSong);
+    } else {
+      currentIndex = songList.indexOf(currentSong);
+    }
   }
 
   void _toggleLoop() {
@@ -84,19 +103,37 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     return [minutes, seconds].join(':');
   }
 
-  void _playNextSong() async {
-    final songs = await getAllSongsFromDatabase();
-    if (currentIndex < songs.length - 1) {
-      currentIndex++;
-      _playSong(songs[currentIndex]);
-    } 
+  void _playNextSong() {
+    if (_isShuffling) {
+      if (currentIndex < shuffledSongList.length - 1) {
+        currentIndex++;
+        _playSong(shuffledSongList[currentIndex]);
+      } else {
+        currentIndex = 0;
+        _playSong(shuffledSongList[currentIndex]);
+      }
+    } else {
+      if (currentIndex < songList.length - 1) {
+        currentIndex++;
+        _playSong(songList[currentIndex]);
+      } else {
+        currentIndex = 0;
+        _playSong(songList[currentIndex]);
+      }
+    }
   }
 
-  void _playPreviousSong() async {
-    final songs = await getAllSongsFromDatabase();
-    if (currentIndex > 0) {
-      currentIndex--;
-      _playSong(songs[currentIndex]);
+  void _playPreviousSong() {
+    if (_isShuffling) {
+      if (currentIndex > 0) {
+        currentIndex--;
+        _playSong(shuffledSongList[currentIndex]);
+      }
+    } else {
+      if (currentIndex > 0) {
+        currentIndex--;
+        _playSong(songList[currentIndex]);
+      }
     }
   }
 
@@ -219,22 +256,14 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
         children: [
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(
-                  0xFF18D518),
-              inactiveTrackColor:
-                  Colors.grey,
-              trackShape:
-                  const RectangularSliderTrackShape(), 
-              trackHeight: 2.0, 
-              thumbColor:
-                  const Color(0xFF18D518),
-              thumbShape: const RoundSliderThumbShape(
-                  enabledThumbRadius:
-                      10),
-              overlayColor: const Color(0xFF18D518).withAlpha(
-                  32),
-              overlayShape: const RoundSliderOverlayShape(
-                  overlayRadius: 5),
+              activeTrackColor: const Color(0xFF18D518),
+              inactiveTrackColor: Colors.grey,
+              trackShape: const RectangularSliderTrackShape(),
+              trackHeight: 2.0,
+              thumbColor: const Color(0xFF18D518),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+              overlayColor: const Color(0xFF18D518).withAlpha(32),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 5),
             ),
             child: Slider(
               min: 0,
@@ -272,8 +301,9 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 onPressed: _toggleLoop,
               ),
               IconButton(
-                icon: Icon(
-                    _isShuffling ? Icons.shuffle_on_outlined : Icons.shuffle_rounded),
+                icon: Icon(_isShuffling
+                    ? Icons.shuffle_on_outlined
+                    : Icons.shuffle_rounded),
                 color: Colors.white,
                 onPressed: _toggleShuffle,
               ),
@@ -308,7 +338,8 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       ),
     );
   }
-//this is dispose 
+
+//this is dispose
   @override
   void dispose() {
     _audioPlayer.dispose();
