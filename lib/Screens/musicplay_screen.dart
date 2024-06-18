@@ -185,13 +185,13 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
 
     return Column(
       children: [
-        SizedBox(height: screenHeight * 0.05),
+        SizedBox(height: screenHeight * 0.03),
         _buildAlbumArt(screenWidth),
-        SizedBox(height: screenHeight * 0.03), // 3% of screen height
+        SizedBox(height: screenHeight * 0.02), 
         _buildSongInfo(),
-        const Spacer(),
+        SizedBox(height: screenHeight * 0.01),
         _buildControls(screenHeight, screenWidth),
-        SizedBox(height: screenHeight * 0.02), // 2% of screen height
+        // SizedBox(height: screenHeight * 0.02),
       ],
     );
   }
@@ -254,6 +254,26 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
           horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
       child: Column(
         children: [
+          Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              icon:const Icon(Icons.favorite_border),
+              color: Colors.white,
+              onPressed: () {
+                // Handle favorite action here
+              },
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon:const Icon(Icons.playlist_add), 
+              color: Colors.white,
+              onPressed: () {
+                // Handle playlist creation action here
+              },
+            ),
+          ],
+        ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(0xFF18D518),
