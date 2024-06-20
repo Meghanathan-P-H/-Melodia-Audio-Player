@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/controls/valueNotifier_fav.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
+import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
 
@@ -115,12 +116,15 @@ class _ScreenFovoriteState extends State<ScreenFovorite> {
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.more_vert, color: Colors.white),
-                    onPressed: () {
-                      // Handle more button press
-                    },
+                    onPressed: () {},
                   ),
                   onTap: () {
-                    // Handle song tap
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ScreenMusicPlay(song: song),
+                    ),
+                  );
                   },
                 );
               },
