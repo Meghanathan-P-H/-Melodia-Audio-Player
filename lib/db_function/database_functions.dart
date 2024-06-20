@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:melodia_audioplayer/controls/valueNotifier_fav.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -39,12 +40,20 @@ Future<List<SongMusic>> getAllSongsFromDatabase() async {
   return songsList;
 }
 
-void likeDbFuction(SongMusic fav) async {
-  final songDb = await Hive.openBox<SongMusic>('song_db');
+Future<SongMusic> likeDbFunction(SongMusic fav) async {
+  final songDb = await Hive.openBox<SongMusic>('music_db');
   SongMusic song = songDb.values.firstWhere((song) => song.musicid == fav.musicid);
   song.islike = !song.islike;
-  songDb.put(song.key, song);
+  await songDb.put(song.key, song);
+
+  // Updating the favorite songs list
+  List<SongMusic> favoriteSongs = await favoriteSongList();
+  favoriteSongsNotifier.updateFavorites(favoriteSongs);
+
+  return song;
 }
+
+
 
 Future<List<SongMusic>> favoriteSongList() async {
   List<SongMusic> songs = await getAllSongsFromDatabase();

@@ -137,6 +137,17 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     }
   }
 
+  void _showFavoriteSnackbar(bool isLiked) {
+    final snackBar = SnackBar(
+      content: Text(
+        !isLiked ? 'Song Removed From Favorites' : 'Song Added To Favorites',
+      ),
+      duration: const Duration(milliseconds: 50),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -187,7 +198,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       children: [
         SizedBox(height: screenHeight * 0.03),
         _buildAlbumArt(screenWidth),
-        SizedBox(height: screenHeight * 0.02), 
+        SizedBox(height: screenHeight * 0.02),
         _buildSongInfo(),
         SizedBox(height: screenHeight * 0.01),
         _buildControls(screenHeight, screenWidth),
@@ -255,25 +266,31 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       child: Column(
         children: [
           Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon:const Icon(Icons.favorite_border),
-              color: Colors.white,
-              onPressed: () {
-                // Handle favorite action here
-              },
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon:const Icon(Icons.playlist_add), 
-              color: Colors.white,
-              onPressed: () {
-                // Handle playlist creation action here
-              },
-            ),
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: Icon(
+                  currentSong.islike ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.red,
+                ),
+                onPressed: () async {
+                  SongMusic updatedSong = await likeDbFunction(currentSong);
+                  setState(() {
+                    currentSong = updatedSong;
+                  });
+                  _showFavoriteSnackbar(updatedSong.islike);
+                },
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.playlist_add),
+                color: Colors.white,
+                onPressed: () {
+                  // Handle playlist creation action here
+                },
+              ),
+            ],
+          ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(0xFF18D518),
