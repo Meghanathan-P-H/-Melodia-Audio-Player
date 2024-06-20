@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/controls/valueNotifier_fav.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
@@ -114,9 +115,30 @@ class _ScreenFovoriteState extends State<ScreenFovorite> {
                     style: const TextStyle(color: Colors.white70),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
-                    onPressed: () {},
+                  trailing: PopupMenuButton<String>(
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      color: Colors.white,
+                    ),
+                    onSelected: (String action) {
+                      handleActionBotton(
+                          context, action, index, song, setState);
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        const PopupMenuItem<String>(
+                          value: 'play',
+                          child: Text('Play'),
+                        ),
+                        PopupMenuItem<String>(
+                          value:
+                              song.islike ? 'remove_favorite' : 'add_favorite',
+                          child: Text(song.islike
+                              ? 'Remove from Favorite'
+                              : 'Add to Favorite'),
+                        )
+                      ];
+                    },
                   ),
                   onTap: () {
                    Navigator.push(
