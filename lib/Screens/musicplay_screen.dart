@@ -5,12 +5,13 @@ import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
 class ScreenMusicPlay extends StatefulWidget {
-  @override
-  // ignore: library_private_types_in_public_api
-  _ScreenMusicPlayState createState() => _ScreenMusicPlayState();
   final SongMusic song;
 
   const ScreenMusicPlay({super.key, required this.song});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ScreenMusicPlayState createState() => _ScreenMusicPlayState();
 }
 
 class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
@@ -20,10 +21,10 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   bool _isLooping = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
-  int currentIndex = 0;
   late SongMusic currentSong;
   List<SongMusic> songList = [];
   List<SongMusic> shuffledSongList = [];
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -46,12 +47,14 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       _isPlaying = true;
       currentSong = song;
     });
+
     // Listen for changes in the audio player's duration
     _audioPlayer.durationStream.listen((newDuration) {
       setState(() {
         duration = newDuration ?? Duration.zero;
       });
     });
+
     // Listen for changes in the audio player's position
     _audioPlayer.positionStream.listen((newPosition) {
       setState(() {
@@ -100,51 +103,38 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return [minutes, seconds].join(':');
+    return '$minutes:$seconds';
   }
 
   void _playNextSong() {
     if (_isShuffling) {
-      if (currentIndex < shuffledSongList.length - 1) {
-        currentIndex++;
-        _playSong(shuffledSongList[currentIndex]);
-      } else {
-        currentIndex = 0;
-        _playSong(shuffledSongList[currentIndex]);
-      }
+      currentIndex = (currentIndex + 1) % shuffledSongList.length;
+      _playSong(shuffledSongList[currentIndex]);
     } else {
-      if (currentIndex < songList.length - 1) {
-        currentIndex++;
-        _playSong(songList[currentIndex]);
-      } else {
-        currentIndex = 0;
-        _playSong(songList[currentIndex]);
-      }
+      currentIndex = (currentIndex + 1) % songList.length;
+      _playSong(songList[currentIndex]);
     }
   }
 
   void _playPreviousSong() {
     if (_isShuffling) {
-      if (currentIndex > 0) {
-        currentIndex--;
-        _playSong(shuffledSongList[currentIndex]);
-      }
+      currentIndex = (currentIndex - 1) % shuffledSongList.length;
+      if (currentIndex < 0) currentIndex += shuffledSongList.length;
+      _playSong(shuffledSongList[currentIndex]);
     } else {
-      if (currentIndex > 0) {
-        currentIndex--;
-        _playSong(songList[currentIndex]);
-      }
+      currentIndex = (currentIndex - 1) % songList.length;
+      if (currentIndex < 0) currentIndex += songList.length;
+      _playSong(songList[currentIndex]);
     }
   }
 
   void _showFavoriteSnackbar(bool isLiked) {
     final snackBar = SnackBar(
       content: Text(
-        !isLiked ? 'Song Removed From Favorites' : 'Song Added To Favorites',
+        isLiked ? 'Song Added To Favorites' : 'Song Removed From Favorites',
       ),
-      duration: const Duration(milliseconds: 50),
+      duration: const Duration(milliseconds: 1500),
     );
-
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
@@ -165,7 +155,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       iconTheme: const IconThemeData(color: Colors.white),
       backgroundColor: Colors.transparent,
       title: const Text(
-        'Playing Now',
+        'Now Playing',
         style: TextStyle(
           color: Colors.white,
           fontSize: 26,
@@ -202,7 +192,6 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
         _buildSongInfo(),
         SizedBox(height: screenHeight * 0.01),
         _buildControls(screenHeight, screenWidth),
-        // SizedBox(height: screenHeight * 0.02),
       ],
     );
   }
@@ -262,7 +251,9 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   Widget _buildControls(double screenHeight, double screenWidth) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
+        horizontal: screenWidth * 0.05,
+        vertical: screenHeight * 0.02,
+      ),
       child: Column(
         children: [
           Row(
@@ -286,7 +277,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 icon: const Icon(Icons.playlist_add),
                 color: Colors.white,
                 onPressed: () {
-                  // here play list crete next week
+                  // Implement playlist addition functionality
                 },
               ),
             ],
@@ -332,15 +323,20 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon:
-                    Icon(_isLooping ? Icons.repeat_one : Icons.repeat_rounded),
+                icon: Icon(
+                  _isLooping
+                      ? Icons.repeat_one
+                      : Icons.repeat_rounded,
+                ),
                 color: Colors.white,
                 onPressed: _toggleLoop,
               ),
               IconButton(
-                icon: Icon(_isShuffling
-                    ? Icons.shuffle_on_outlined
-                    : Icons.shuffle_rounded),
+                icon: Icon(
+                  _isShuffling
+                      ? Icons.shuffle_on_outlined
+                      : Icons.shuffle_rounded,
+                ),
                 color: Colors.white,
                 onPressed: _toggleShuffle,
               ),
@@ -356,9 +352,11 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 onPressed: _playPreviousSong,
               ),
               IconButton(
-                icon: Icon(_isPlaying
-                    ? Icons.pause_circle_filled_rounded
-                    : Icons.play_circle_fill_rounded),
+                icon: Icon(
+                  _isPlaying
+                      ? Icons.pause_circle_filled_rounded
+                      : Icons.play_circle_fill_rounded,
+                ),
                 color: const Color(0xFF18D518),
                 iconSize: 60,
                 onPressed: _playPause,
@@ -376,7 +374,6 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     );
   }
 
-//this is dispose
   @override
   void dispose() {
     _audioPlayer.dispose();
