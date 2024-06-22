@@ -20,7 +20,7 @@ class _MainHomeState extends State<MainHome> {
   final List<Widget> _screens = const[
     ScreenHome(),
     ScreenSearch(),
-    ScreenFovorite(),
+    ScreenFavorite(),
     ScreenPlayList(),
   ];
 

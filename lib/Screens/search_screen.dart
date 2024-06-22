@@ -26,7 +26,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
   Future<void> fetchSongs() async {
     final songs = await getAllSongsFromDatabase();
     // ignore: avoid_print
-    print("Fetched songs: ${songs.length}");
+    print("all songs here done");
     setState(() {
       allMusics = songs;
       displayedMusics = songs;
@@ -58,8 +58,8 @@ class _ScreenSearchState extends State<ScreenSearch> {
       });
     }
 
-    // ignore: avoid_print
-    print("Filtered songs: ${displayedMusics.length}");
+    // // ignore: avoid_print
+    // print("halloooo");
   }
 
   @override
