@@ -46,7 +46,7 @@ Future<SongMusic> likeDbFunction(SongMusic fav) async {
   song.islike = !song.islike;
   await songDb.put(song.key, song);
 
-  // Updating the favorite songs list
+  
   List<SongMusic> favoriteSongs = await favoriteSongList();
   favoriteSongsNotifier.updateFavorites(favoriteSongs);
 
