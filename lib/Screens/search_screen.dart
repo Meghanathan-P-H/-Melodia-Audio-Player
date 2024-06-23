@@ -55,11 +55,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
     }
   }
 
-  @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-    debugPrint('object hello');
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
