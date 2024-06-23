@@ -28,8 +28,8 @@ class _ScreenSearchState extends State<ScreenSearch> {
     // ignore: avoid_print
     print("all songs here done");
     setState(() {
-      allMusics = songs;
-      displayedMusics = songs;
+      allMusics = songs..sort((a, b) => a.name.compareTo(b.name));
+      displayedMusics = List.from(allMusics);
     });
   }
 
@@ -42,24 +42,23 @@ class _ScreenSearchState extends State<ScreenSearch> {
       });
     } else {
       List<SongMusic> matchedSongs = [];
-      List<SongMusic> unmatchedSongs = [];
-
       for (var song in allMusics) {
         if (song.name.toLowerCase().contains(searchText) ||
             song.artist.toLowerCase().contains(searchText)) {
           matchedSongs.add(song);
-        } else {
-          unmatchedSongs.add(song);
         }
       }
 
       setState(() {
-        displayedMusics = [...matchedSongs, ...unmatchedSongs];
+        displayedMusics = matchedSongs;
       });
     }
+  }
 
-    // // ignore: avoid_print
-    // print("halloooo");
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    debugPrint('object hello');
   }
 
   @override
