@@ -112,6 +112,10 @@ class _ListItemWidgetState extends State<ListItemWidget> {
 
   Widget _buildFavoriteButton() {
     return IconButton(
+      icon: Icon(
+        song.islike ? Icons.favorite_rounded : Icons.favorite_border,
+        color: Colors.red,
+      ),
       onPressed: () async {
         SongMusic updatedMusics = await likeDbFunction(song);
         setState(() {
@@ -122,10 +126,6 @@ class _ListItemWidgetState extends State<ListItemWidget> {
         final updatedFavorites = await favoriteSongList();
         favoriteSongsNotifier.updateFavorites(updatedFavorites);
       },
-      icon: Icon(
-        song.islike ? Icons.favorite_rounded : Icons.favorite_border,
-        color: Colors.red,
-      ),
       iconSize: 35.0,
     );
   }
