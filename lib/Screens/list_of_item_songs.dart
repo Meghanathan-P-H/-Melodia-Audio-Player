@@ -26,7 +26,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
     super.initState();
     song = widget.song;
   }
-   
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -118,10 +118,14 @@ class _ListItemWidgetState extends State<ListItemWidget> {
           song = updatedMusics;
         });
 
-        favoriteSongsNotifier.updateFavorites(await favoriteSongList());
+        // Update the favoriteSongsNotifier directly
+        final updatedFavorites = await favoriteSongList();
+        favoriteSongsNotifier.updateFavorites(updatedFavorites);
       },
-      icon: Icon(widget.song.islike ? Icons.favorite_rounded : Icons.favorite_border,
-          color: Colors.red),
+      icon: Icon(
+        song.islike ? Icons.favorite_rounded : Icons.favorite_border,
+        color: Colors.red,
+      ),
       iconSize: 35.0,
     );
   }

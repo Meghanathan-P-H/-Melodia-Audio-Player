@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
 import 'package:melodia_audioplayer/Screens/settings_drawer.dart';
+import 'package:melodia_audioplayer/controls/valuenotifier_fav.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/screens/permission_provider.dart';
@@ -46,12 +47,16 @@ class _ScreenHomeState extends State<ScreenHome> {
       drawer: const SettingsDrawer(),
       body: RefreshIndicator(
         onRefresh: _refreshSongs,
-        child: _buildBody(),
+        child: ValueListenableBuilder<List<SongMusic>>(
+          valueListenable: favoriteSongsNotifier,
+          builder: (context, favoriteSongs, _) {
+            return _buildBody();
+          },
+        ),
       ),
     );
   }
 
-  //Build the AppBar
   AppBar _buildAppbar() {
     return AppBar(
       backgroundColor: Colors.black,
@@ -65,19 +70,19 @@ class _ScreenHomeState extends State<ScreenHome> {
       ),
       actions: [
         IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState?.openDrawer();
-            },
-            icon: const Icon(
-              Icons.settings_suggest_outlined,
-              color: Colors.white,
-              size: 45,
-            ))
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+          icon: const Icon(
+            Icons.settings_suggest_outlined,
+            color: Colors.white,
+            size: 45,
+          ),
+        )
       ],
     );
   }
 
-  //Build the Body of the Screen
   Widget _buildBody() {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -87,20 +92,17 @@ class _ScreenHomeState extends State<ScreenHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             _buildHeaderText(),
             _buildBannerImage(),
             _buildSectionTitle('All Songs'),
-            _buildSongList()
+            _buildSongList(),
           ],
         ),
       ),
     );
   }
 
-  //Build the Header Text
   Widget _buildHeaderText() {
     return const Padding(
       padding: EdgeInsets.only(left: 20.0),
@@ -112,7 +114,6 @@ class _ScreenHomeState extends State<ScreenHome> {
     );
   }
 
-  //Build the banner Image
   Widget _buildBannerImage() {
     return Container(
       margin: const EdgeInsets.all(15.0),
@@ -121,13 +122,13 @@ class _ScreenHomeState extends State<ScreenHome> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         image: const DecorationImage(
-            image: AssetImage('asset/images/BannerImage.jpg'),
-            fit: BoxFit.fill),
+          image: AssetImage('asset/images/BannerImage.jpg'),
+          fit: BoxFit.fill,
+        ),
       ),
     );
   }
 
-  // Build section title
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
@@ -142,22 +143,17 @@ class _ScreenHomeState extends State<ScreenHome> {
     );
   }
 
-  // Build the list of songs
-  // Build the list of songs
-Widget _buildSongList() {
-  return FutureBuilder<List<SongMusic>>(
+  Widget _buildSongList() {
+    return FutureBuilder<List<SongMusic>>(
       future: _futureSongs,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null || snapshot.data!.isEmpty) {
           return const Center(
             child: Text(
               'NO Songs Found',
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
           );
         } else {
@@ -166,14 +162,14 @@ Widget _buildSongList() {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return ListItemWidget(
-                  index: index,
-                  song: snapshot.data![index]);
+                index: index,
+                song: snapshot.data![index],
+              );
             },
             itemCount: snapshot.data!.length,
           );
         }
-      });
+      },
+    );
+  }
 }
-
-}
-
