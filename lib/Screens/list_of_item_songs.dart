@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/Screens/musicplay_screen.dart';
-import 'package:melodia_audioplayer/controls/valuenotifier_fav.dart';
-import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 
-class ListItemWidget extends StatefulWidget {
+class ListItemWidget extends StatelessWidget {
   final int index;
   final SongMusic song;
 
@@ -15,29 +13,16 @@ class ListItemWidget extends StatefulWidget {
   });
 
   @override
-  State<ListItemWidget> createState() => _ListItemWidgetState();
-}
-
-class _ListItemWidgetState extends State<ListItemWidget> {
-  late SongMusic song;
-
-  @override
-  void initState() {
-    super.initState();
-    song = widget.song;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ScreenMusicPlay(song: widget.song),
-            ),
-          );
+    MaterialPageRoute(
+      builder: (context) => ScreenMusicPlay(song: song),
+    ),
+  );
         },
         child: Container(
           padding: const EdgeInsets.all(8.0),
@@ -85,12 +70,12 @@ class _ListItemWidgetState extends State<ListItemWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.song.name,
+            song.name,
             style: _titleTextStyle,
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            widget.song.artist,
+            song.artist,
             style: _subtitleTextStyle,
             overflow: TextOverflow.ellipsis,
           ),
@@ -112,20 +97,8 @@ class _ListItemWidgetState extends State<ListItemWidget> {
 
   Widget _buildFavoriteButton() {
     return IconButton(
-      icon: Icon(
-        song.islike ? Icons.favorite_rounded : Icons.favorite_border,
-        color: Colors.red,
-      ),
-      onPressed: () async {
-        SongMusic updatedMusics = await likeDbFunction(song);
-        setState(() {
-          song = updatedMusics;
-        });
-
-        // Update the favoriteSongsNotifier directly
-        final updatedFavorites = await favoriteSongList();
-        favoriteSongsNotifier.updateFavorites(updatedFavorites);
-      },
+      onPressed: (){},
+      icon:const Icon(Icons.favorite_border, color: Colors.red),
       iconSize: 35.0,
     );
   }

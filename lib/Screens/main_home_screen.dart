@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/Screens/list_of_item_songs.dart';
 import 'package:melodia_audioplayer/Screens/settings_drawer.dart';
-import 'package:melodia_audioplayer/controls/valuenotifier_fav.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/screens/permission_provider.dart';
@@ -45,15 +44,7 @@ class _ScreenHomeState extends State<ScreenHome> {
       backgroundColor: Colors.black,
       appBar: _buildAppbar(),
       drawer: const SettingsDrawer(),
-      body: RefreshIndicator(
-        onRefresh: _refreshSongs,
-        child: ValueListenableBuilder<List<SongMusic>>(
-          valueListenable: favoriteSongsNotifier,
-          builder: (context, favoriteSongs, _) {
-            return _buildBody();
-          },
-        ),
-      ),
+      body: RefreshIndicator(onRefresh: _refreshSongs, child: _buildBody()),
     );
   }
 
@@ -144,16 +135,19 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   Widget _buildSongList() {
-    return FutureBuilder<List<SongMusic>>(
+  return FutureBuilder<List<SongMusic>>(
       future: _futureSongs,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.data == null || snapshot.data!.isEmpty) {
           return const Center(
             child: Text(
               'NO Songs Found',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
           );
         } else {
@@ -162,14 +156,12 @@ class _ScreenHomeState extends State<ScreenHome> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return ListItemWidget(
-                index: index,
-                song: snapshot.data![index],
-              );
+                  index: index,
+                  song: snapshot.data![index]);
             },
             itemCount: snapshot.data!.length,
           );
         }
-      },
-    );
-  }
+      });
+}
 }
