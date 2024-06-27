@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/Screens/musicplay_screen.dart';
+import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 
 class ListItemWidget extends StatelessWidget {
@@ -34,7 +36,7 @@ class ListItemWidget extends StatelessWidget {
               const SizedBox(width: 10),
               _buildTextContent(),
               _buildFavoriteButton(),
-              _buildPlayButton(),
+              _buildPlayButton(context),
             ],
           ),
         ),
@@ -103,11 +105,28 @@ class ListItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayButton() {
-    return IconButton(
-      onPressed: () {},
-      icon: const Icon(Icons.more_vert_rounded, color: Colors.green),
-      iconSize: 40.0,
-    );
+  Widget _buildPlayButton(BuildContext context) {
+     return PopupMenuButton<String>(
+    icon: const Icon(Icons.more_vert_rounded, color: Colors.green, size: 40.0),
+    onSelected: (String action) {
+      handleActionBotton(context, action, index, song, (fn) => fn());
+    },
+    itemBuilder: (BuildContext context) {
+      return [
+        const PopupMenuItem(
+          value: 'play',
+          child: Text('Play'),
+        ),
+        PopupMenuItem(
+          value: song.islike ? 'remove_favorite' : 'add_favorite',
+          child: Text(song.islike ? 'Remove from Favorites' : 'Add to Favorites'),
+        ),
+        const PopupMenuItem(
+          value: 'shre',
+          child: Text('Share'),
+        ),
+      ];
+    },
+  );
   }
 }
