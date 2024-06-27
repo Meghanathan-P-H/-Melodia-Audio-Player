@@ -3,7 +3,7 @@ import 'package:melodia_audioplayer/Screens/musicplay_screen.dart';
 import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 
-class ListItemWidget extends StatelessWidget {
+class ListItemWidget extends StatefulWidget {
   final int index;
   final SongMusic song;
 
@@ -14,6 +14,11 @@ class ListItemWidget extends StatelessWidget {
   });
 
   @override
+  State<ListItemWidget> createState() => _ListItemWidgetState();
+}
+
+class _ListItemWidgetState extends State<ListItemWidget> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
@@ -21,7 +26,7 @@ class ListItemWidget extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (context) => ScreenMusicPlay(song: song),
+      builder: (context) => ScreenMusicPlay(song: widget.song),
     ),
   );
         },
@@ -34,7 +39,7 @@ class ListItemWidget extends StatelessWidget {
               _buildImage(),
               const SizedBox(width: 10),
               _buildTextContent(),
-              _buildFavoriteButton(),
+              // _buildFavoriteButton(context),
               _buildPlayButton(context),
             ],
           ),
@@ -71,12 +76,12 @@ class ListItemWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            song.name,
+            widget.song.name,
             style: _titleTextStyle,
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            song.artist,
+            widget.song.artist,
             style: _subtitleTextStyle,
             overflow: TextOverflow.ellipsis,
           ),
@@ -96,19 +101,27 @@ class ListItemWidget extends StatelessWidget {
         fontSize: 16,
       );
 
-  Widget _buildFavoriteButton() {
-    return IconButton(
-      onPressed: (){},
-      icon:const Icon(Icons.favorite_border, color: Colors.red),
-      iconSize: 35.0,
-    );
-  }
+//   Widget _buildFavoriteButton(BuildContext context) {
+//   return IconButton(
+//     onPressed: () async {
+//       SongMusic updatedSong = await likeDbFunction(widget.song);
+//       setState(() {
+//         widget.song.islike = updatedSong.islike;
+//       });
+//     },
+//     icon: Icon(
+//       widget.song.islike ? Icons.favorite : Icons.favorite_border,
+//       color: Colors.red,
+//     ),
+//     iconSize: 35.0,
+//   );
+// }
 
   Widget _buildPlayButton(BuildContext context) {
      return PopupMenuButton<String>(
     icon: const Icon(Icons.more_vert_rounded, color: Colors.green, size: 40.0),
     onSelected: (String action) {
-      handleActionBotton(context, action, index, song, (fn) => fn());
+      handleActionBotton(context, action, widget.index, widget.song, (fn) => fn());
     },
     itemBuilder: (BuildContext context) {
       return [
@@ -117,8 +130,8 @@ class ListItemWidget extends StatelessWidget {
           child: Text('Play'),
         ),
         PopupMenuItem(
-          value: song.islike ? 'remove_favorite' : 'add_favorite',
-          child: Text(song.islike ? 'Remove from Favorites' : 'Add to Favorites'),
+          value: widget.song.islike ? 'remove_favorite' : 'add_favorite',
+          child: Text(widget.song.islike ? 'Remove from Favorites' : 'Add to Favorites'),
         ),
         const PopupMenuItem(
           value: 'shre',
