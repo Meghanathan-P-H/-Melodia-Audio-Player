@@ -134,8 +134,8 @@ class _ListItemWidgetState extends State<ListItemWidget> {
           child: Text(widget.song.islike ? 'Remove from Favorites' : 'Add to Favorites'),
         ),
         const PopupMenuItem(
-          value: 'shre',
-          child: Text('Share'),
+          value: 'playlist',
+          child: Text('Add to PlayList'),
         ),
       ];
     },

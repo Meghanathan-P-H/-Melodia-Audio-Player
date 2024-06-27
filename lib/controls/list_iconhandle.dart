@@ -39,10 +39,40 @@ void handleActionBotton(BuildContext context, String action, int index,
         ),
       );
       break;
-    case 'shre':
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Play selected for item $index')),
-      );
+    case 'playlist':
+       showPlaylistBottomSheet(context);
+      
       break;
   }
+}
+
+void showPlaylistBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return FractionallySizedBox(
+        heightFactor: 1,
+        child: Container(
+          decoration:const BoxDecoration(
+            color: Color(0xFF1E1E1E),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.playlist_add, color: Colors.white),
+                title: Text('Add to New Playlist', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  // Handle adding to a new playlist
+                },
+              ),
+              // Add more ListTiles or other widgets as needed
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
