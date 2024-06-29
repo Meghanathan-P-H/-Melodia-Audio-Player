@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:melodia_audioplayer/Screens/splash_screen.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/db_model/db_playlistmodel.dart';
+import 'package:melodia_audioplayer/db_model/db_recentlyplay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,9 @@ void main() async {
   }
   if (!Hive.isAdapterRegistered(PlayListmodelAdapter().typeId)) {
     Hive.registerAdapter(PlayListmodelAdapter());
+  }
+  if (!Hive.isAdapterRegistered(RecentlySongsModelAdapter().typeId)) {
+    Hive.registerAdapter(RecentlySongsModelAdapter());
   }
   runApp(const MyApp());
 }
