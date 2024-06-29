@@ -11,3 +11,14 @@ class FavoriteSongsNotifier extends ValueNotifier<List<SongMusic>> {
 }
 
 final favoriteSongsNotifier = FavoriteSongsNotifier([]);
+
+class RecentlyPlayedSongsNotifier extends ValueNotifier<List<SongMusic>> {
+  RecentlyPlayedSongsNotifier() : super([]);
+
+  void updateRecentlyPlayed(List<SongMusic> songs) {
+    value = songs;
+    notifyListeners();
+  }
+}
+
+final recentlyPlayedSongsNotifier = RecentlyPlayedSongsNotifier();
