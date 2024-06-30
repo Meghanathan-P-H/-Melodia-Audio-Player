@@ -21,7 +21,7 @@ class _RecentlyScreenState extends State<RecentlyScreen> {
   }
 
   Future<void> _loadRecentlyPlayedSongs() async {
-    final songs = await recentlyplayedSongs();
+    final songs = await recentlyPlayedSongs();
     recentlyPlayedSongsNotifier.updateRecentlyPlayed(songs);
   }
 

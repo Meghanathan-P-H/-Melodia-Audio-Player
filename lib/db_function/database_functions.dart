@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:melodia_audioplayer/controls/valueNotifier_fav.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/db_model/db_playlistmodel.dart';
+import 'package:melodia_audioplayer/db_model/db_recentlyplay.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 Future<void> allSongs({required List<SongModel> futureSong}) async {
@@ -164,4 +165,33 @@ Future<List<SongMusic>> playlistSongs({required PlayListmodel playlist}) async {
     }
   }
   return result;
+}
+
+
+void addSongToRecently(int songindex) async {
+  final recentlyDb = await Hive.openBox<RecentlySongsModel>('recently_db');
+  List<RecentlySongsModel> songs = recentlyDb.values.toList();
+  for (int i = 0; i < songs.length; i++) {
+    if (songs[i].songId == songindex) {
+      recentlyDb.delete(songs[i].key);
+      break;
+    }
+  }
+  recentlyDb.add(RecentlySongsModel(songId:songindex));
+}
+
+Future<List<SongMusic>> recentlyPlayedSongs() async {
+ final recentlyDb = await Hive.openBox<RecentlySongsModel>('recently_db');
+  List<RecentlySongsModel> songs = recentlyDb.values.toList();
+  List<SongMusic> allSongs = await  getAllSongsFromDatabase();
+  List<SongMusic> recents = [];
+  for (int i = 0; i < songs.length; i++) {
+    for (int j = 0; j < allSongs.length; j++) {
+      if (songs[i].songId == allSongs[j].musicid) {
+        recents.add(allSongs[j]);
+      }
+    }
+  }
+
+  return recents.reversed.toList();
 }
