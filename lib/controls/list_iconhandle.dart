@@ -81,35 +81,35 @@ void showPlaylistBottomSheet(BuildContext context,
                   color: Colors.white,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.0200),
-                GestureDetector(
-                  onTap: () {
-                    // checkplaylistNames();
-                    showCreatePlaylistBar(context);
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.03),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                MediaQuery.of(context).size.width * 0.03),
-                            color: Colors.white),
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.0500),
-                      const Text(
-                        "CREATE NEW PLAYLIST",
-                        style: TextStyle(fontSize: 15, color: Colors.white),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.020),
+                // GestureDetector(
+                //   onTap: () {
+                //     // checkplaylistNames();
+                //     showCreatePlaylistBar(context);
+                //   },
+                //   child: Row(
+                //     children: [
+                //       Container(
+                //         padding: EdgeInsets.all(
+                //             MediaQuery.of(context).size.width * 0.03),
+                //         decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(
+                //                 MediaQuery.of(context).size.width * 0.03),
+                //             color: Colors.white),
+                //         child: const Icon(
+                //           Icons.add,
+                //           color: Colors.black,
+                //         ),
+                //       ),
+                //       SizedBox(
+                //           width: MediaQuery.of(context).size.width * 0.0500),
+                //       const Text(
+                //         "CREATE NEW PLAYLIST",
+                //         style: TextStyle(fontSize: 15, color: Colors.white),
+                //       )
+                //     ],
+                //   ),
+                // ),
+                // SizedBox(height: MediaQuery.of(context).size.height * 0.020),
                 Expanded(
                   child: FutureBuilder(
                     future: getSongsFromPlaylist(),
