@@ -175,6 +175,7 @@ if (title == "Recently played") {
   ),
 );
 }
+//comment show dialogue
 void showDeleteConfirmationDialog(BuildContext context, int index) {
     showDialog(
       context: context,
