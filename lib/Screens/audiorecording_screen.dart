@@ -27,9 +27,9 @@ class _ScreenMusicPlayState extends State<ScreenAudioRecord> {
             'VOICE RECORDER',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.5
+              letterSpacing: 1
             ),
           ),
           centerTitle: true,

@@ -26,7 +26,7 @@ class _ScreenMusicPlayState extends State<RecorderFilesScreen> {
             'RECORDER AUDIOS',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 23,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
