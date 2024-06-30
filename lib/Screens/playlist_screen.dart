@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_playlistmodel.dart';
+import 'package:melodia_audioplayer/screens/playlsitopen.dart';
 import 'package:melodia_audioplayer/screens/recentlyplay_screen.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
@@ -110,11 +111,11 @@ if (title == "Recently played") {
         builder: (context) =>const RecentlyScreen(),
       ));
     } else {
-      // Navigator.of(context).push(MaterialPageRoute(
-      //     builder: (context) => Openplaylist(
-      //           listmodel: playlist!,
-      //           playlistnames: title,
-      //         )));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => OpenPlayList(
+                  playListmodel: playlist!,
+                  playlistname: title,
+              )));
     }
   },
   child: Container(
@@ -163,6 +164,5 @@ if (title == "Recently played") {
     ),
   ),
 );
-
   }
 }
