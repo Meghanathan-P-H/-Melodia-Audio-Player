@@ -89,7 +89,17 @@ Future<void> deletePlaylist(int index) async {
   }
 }
 
-renameplaylist(
+// renameplaylist(
+//     {required PlayListmodel playlist, required String newname}) async {
+//   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
+//   final storedPlaylist = playListDb.get(playlist.key);
+//   if (storedPlaylist != null) {
+//     storedPlaylist.name = newname;
+//     playListDb.put(playlist.key, storedPlaylist);
+//   }
+// }
+
+Future<void> renameplaylist(
     {required PlayListmodel playlist, required String newname}) async {
   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
   final storedPlaylist = playListDb.get(playlist.key);
@@ -99,71 +109,132 @@ renameplaylist(
   }
 }
 
-addSongtoPlaylist(
+// addSongtoPlaylist(
+//     {required int songid, required PlayListmodel playlist}) async {
+//   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
+//   final addpl = playListDb.get(playlist.key);
+//   if (addpl!.songid.contains(songid)) {
+//     addpl.songid.add(songid);
+//     playListDb.put(playlist.key, addpl);
+//     debugPrint("$songid added");
+//   } else {
+//     debugPrint("song already present in playlist");
+//   }
+// }
+Future<void> addSongtoPlaylist(
     {required int songid, required PlayListmodel playlist}) async {
   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
   final addpl = playListDb.get(playlist.key);
-  if (addpl!.songid.contains(songid)) {
+  if (addpl != null && !addpl.songid.contains(songid)) {
     addpl.songid.add(songid);
     playListDb.put(playlist.key, addpl);
     debugPrint("$songid added");
   } else {
-    debugPrint("song already present in playlist");
+    debugPrint("Song already present in playlist");
   }
 }
 
 List<int> songsinPlylist = [];
 
-checkSongOnPlaylist({required PlayListmodel playlist}) async {
+// checkSongOnPlaylist({required PlayListmodel playlist}) async {
+//   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
+//   final addpl = playListDb.get(playlist.key);
+//   songsinPlylist = addpl!.songid;
+// }
+Future<void> checkSongOnPlaylist({required PlayListmodel playlist}) async {
   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
   final addpl = playListDb.get(playlist.key);
-  songsinPlylist = addpl!.songid;
+  if (addpl != null) {
+    songsinPlylist = addpl.songid;
+  }
 }
 
 List<String> playlistNames = [];
 
-checkplaylistNames() async {
+// checkplaylistNames() async {
+//   playlistNames.clear();
+//   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
+//   for (int i = 0; i < playListDb.length; i++) {
+//     final playlist = playListDb.get(i);
+//     if (playlist != null) {
+//       playlistNames.add(playlist.name);
+//       debugPrint("playlist name $i - ${playlist.name}");
+//     }
+//   }
+//   await playListDb.close();
+// }
+Future<void> checkplaylistNames() async {
   playlistNames.clear();
   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
   for (int i = 0; i < playListDb.length; i++) {
-    final playlist = playListDb.get(i);
+    final playlist = playListDb.getAt(i);
     if (playlist != null) {
       playlistNames.add(playlist.name);
       debugPrint("playlist name $i - ${playlist.name}");
     }
   }
-  await playListDb.close();
+  // No need to explicitly close the box here
+  // await playListDb.close();
 }
 
-removeSongsFromplaylsit(
+// removeSongsFromplaylsit(
+//     {required int songid, required PlayListmodel playlist}) async {
+//   final playListDb = await Hive.openBox<PlayListmodel>('list_db');
+//   final pb = playListDb.get(playlist.key);
+//   pb!.songid.remove(songid);
+//   playListDb.put(playlist.key, pb);
+//   debugPrint("$songid removed");
+// }
+Future<void> removeSongsFromplaylsit(
     {required int songid, required PlayListmodel playlist}) async {
-  final playListDb = await Hive.openBox<PlayListmodel>('list_db');
+  final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
   final pb = playListDb.get(playlist.key);
-  pb!.songid.remove(songid);
-  playListDb.put(playlist.key, pb);
-  debugPrint("$songid removed");
+  if (pb != null) {
+    pb.songid.remove(songid);
+    playListDb.put(playlist.key, pb);
+    debugPrint("$songid removed");
+  }
 }
 
+// Future<List<SongMusic>> playlistSongs({required PlayListmodel playlist}) async {
+//   final playListDb = await Hive.openBox<PlayListmodel>('list_db');
+//   PlayListmodel? sng = playListDb.get(playlist.key);
+//   List<int> plSongs = sng!.songid;
+//   List<SongMusic> allsongs = await getAllSongsFromDatabase();
+//   List<SongMusic> result = [];
+//   for (int i = 0; i < allsongs.length; i++) {
+//     for (int j = 0; j < plSongs.length; j++) {
+//       if (allsongs[i].musicid == plSongs[j]) {
+//         result.add(SongMusic(
+//             musicid: allsongs[i].musicid,
+//             uri: allsongs[i].uri,
+//             name: allsongs[i].name,
+//             artist: allsongs[i].artist,
+//             album: allsongs[i].album,
+//             islike: allsongs[i].islike,
+//             path: allsongs[i].path));
+//       }
+//     }
+//   }
+//   return result;
+// }
 Future<List<SongMusic>> playlistSongs({required PlayListmodel playlist}) async {
-  final playListDb = await Hive.openBox<PlayListmodel>('list_db');
+  final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
   PlayListmodel? sng = playListDb.get(playlist.key);
-  List<int> plSongs = sng!.songid;
+  if (sng == null) return [];
+
+  List<int> plSongs = sng.songid;
   List<SongMusic> allsongs = await getAllSongsFromDatabase();
   List<SongMusic> result = [];
-  for (int i = 0; i < allsongs.length; i++) {
-    for (int j = 0; j < plSongs.length; j++) {
-      if (allsongs[i].musicid == plSongs[j]) {
-        result.add(SongMusic(
-            musicid: allsongs[i].musicid,
-            uri: allsongs[i].uri,
-            name: allsongs[i].name,
-            artist: allsongs[i].artist,
-            album: allsongs[i].album,
-            islike: allsongs[i].islike,
-            path: allsongs[i].path));
+
+  for (int songId in plSongs) {
+    for (SongMusic song in allsongs) {
+      if (song.musicid == songId) {
+        result.add(song);
       }
     }
   }
+
   return result;
 }
 

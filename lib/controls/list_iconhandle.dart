@@ -4,7 +4,7 @@ import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 
 void handleActionBotton(BuildContext context, String action, int index,
-    SongMusic song, Function(void Function()) setState) async {
+    SongMusic song, Function(void Function()) setState,) async {
   final scaffoldMessenger = ScaffoldMessenger.of(context);
   switch (action) {
     case 'play':
@@ -40,15 +40,20 @@ void handleActionBotton(BuildContext context, String action, int index,
       );
       break;
     case 'playlist':
-      showPlaylistBottomSheet(context);
+      showPlaylistBottomSheet(context,songId: song.musicid);
+      await checkplaylistNames();
 
       break;
   }
 }
 
 List<String> playlistNames = ["Favorites"];
-void showPlaylistBottomSheet(BuildContext context) {
+void showPlaylistBottomSheet(BuildContext context,
+    {required int songId}) async {
+  await checkplaylistNames();
+
   showModalBottomSheet(
+    // ignore: use_build_context_synchronously
     context: context,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
@@ -78,7 +83,7 @@ void showPlaylistBottomSheet(BuildContext context) {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.0200),
                 GestureDetector(
                   onTap: () {
-                    checkplaylistNames();
+                    // checkplaylistNames();
                     showCreatePlaylistBar(context);
                   },
                   child: Row(
@@ -110,17 +115,18 @@ void showPlaylistBottomSheet(BuildContext context) {
                     future: getSongsFromPlaylist(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                            child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {
                         List<String> allPlayLists = [];
                         if (snapshot.data != null) {
-                          allPlayLists.addAll(snapshot.data!
-                              .map((playlist) => playlist.name));
+                          allPlayLists.addAll(
+                              snapshot.data!.map((playlist) => playlist.name));
                         }
-                        allPlayLists.removeWhere((playlist) => playlist == "Favorites"); // Remove Favorites from the list
+                        allPlayLists.removeWhere((playlist) =>
+                            playlist ==
+                            "Favorites"); // Remove Favorites from the list
                         return ListView.builder(
                           itemCount: allPlayLists.length,
                           itemBuilder: ((context, index) {
@@ -129,10 +135,10 @@ void showPlaylistBottomSheet(BuildContext context) {
                                 InkWell(
                                   onTap: () async {
                                     await addSongtoPlaylist(
-                                        songid: index,
+                                        songid: songId,
                                         playlist: snapshot.data![index]);
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.pop(context);
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
@@ -175,9 +181,8 @@ void showPlaylistBottomSheet(BuildContext context) {
                                   ),
                                 ),
                                 SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height *
-                                            0.0125),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.0125),
                               ],
                             );
                           }),
@@ -195,7 +200,7 @@ void showPlaylistBottomSheet(BuildContext context) {
   );
 }
 
-void showCreatePlaylistBar(BuildContext context) {
+void showCreatePlaylistBar(BuildContext context,[Function()? refreshPlaylists]) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -204,7 +209,7 @@ void showCreatePlaylistBar(BuildContext context) {
         data: ThemeData(dialogBackgroundColor: Colors.transparent),
         child: Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding:const EdgeInsets.all(16.0), // Adjust the padding as needed
+          insetPadding: const EdgeInsets.all(16.0), // Adjust the padding as needed
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -213,7 +218,7 @@ void showCreatePlaylistBar(BuildContext context) {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color:const Color(0xFF1E1E1E),
+                  color: const Color(0xFF1E1E1E),
                   borderRadius: BorderRadius.circular(
                       MediaQuery.of(context).size.width * 0.02),
                 ),
@@ -265,11 +270,16 @@ void showCreatePlaylistBar(BuildContext context) {
                           SizedBox(
                               width: MediaQuery.of(context).size.width * 0.0655),
                           TextButton(
-                              onPressed: () {
-                                addToPlaylist(
+                              onPressed: () async {
+                                await addToPlaylist(
                                     name: createController.text, songid: []);
+                                await checkplaylistNames(); // Refresh the playlist names
+
+                                // Call refreshPlaylists if provided
+                                refreshPlaylists?.call();
                                 debugPrint(
                                     'Updated Playlist Names: $playlistNames');
+                                // ignore: use_build_context_synchronously
                                 Navigator.pop(context);
                               },
                               child: const Text(
