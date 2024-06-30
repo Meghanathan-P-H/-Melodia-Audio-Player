@@ -6,6 +6,7 @@ import 'package:melodia_audioplayer/screens/playlsitopen.dart';
 import 'package:melodia_audioplayer/screens/recentlyplay_screen.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
+
 class ScreenPlayList extends StatefulWidget {
   const ScreenPlayList({super.key});
 
@@ -135,17 +136,26 @@ if (title == "Recently played") {
         if (showmoreoption)
           Align(
             alignment: Alignment.topRight,
-            child: IconButton(
-              onPressed: () async {
-                // ShowBottomSheetPlayListSettting(
-                //     context, index, title, playlist);
-              },
-              icon: Icon(
-                Icons.more_vert,
-                color: Colors.white,
-                size: 28 * MediaQuery.of(context).size.width / 375.0,
-              ),
-            ),
+            child: PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == 'delete') {
+                      showDeleteConfirmationDialog(context, index - playlistNames.length);
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Text('Delete Playlist'),
+                      ),
+                    ];
+                  },
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 28 * MediaQuery.of(context).size.width / 375.0,
+                  ),
+                ),
           ),
         Icon(
           Icons.music_note,
@@ -164,5 +174,34 @@ if (title == "Recently played") {
     ),
   ),
 );
+}
+void showDeleteConfirmationDialog(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Playlist'),
+          content: const Text('Are you sure you want to delete this playlist?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                deletePlaylist(index);
+                Navigator.of(context).pop();
+                setState(() {
+                  
+                });
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
