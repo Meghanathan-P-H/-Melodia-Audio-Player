@@ -2,24 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/db_model/db_playlistmodel.dart';
-import 'package:melodia_audioplayer/screens/allsongplaylist.dart';
 import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 import 'package:melodia_audioplayer/screens/permission_provider.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
-// ignore: must_be_immutable
-class OpenPlayList extends StatefulWidget {
-  String playlistname;
-  PlayListmodel playListmodel;
-  OpenPlayList(
-      {required this.playlistname, required this.playListmodel, super.key});
+
+class AllSongsPlaylist extends StatefulWidget {
+  final PlayListmodel playlistModel;
+  const AllSongsPlaylist({required this.playlistModel, super.key});
 
   @override
-  State<OpenPlayList> createState() => _OpenPlayListState();
+  State<AllSongsPlaylist> createState() => _AllSongsPlaylistState();
 }
 
-class _OpenPlayListState extends State<OpenPlayList> {
-  TextEditingController textFieldController = TextEditingController();
+class _AllSongsPlaylistState extends State<AllSongsPlaylist> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,41 +27,22 @@ class _OpenPlayListState extends State<OpenPlayList> {
             AppBar(
               iconTheme: const IconThemeData(color: Colors.white),
               backgroundColor: const Color(0xFF282C28),
-              title: Text(
-                widget.playlistname,
-                style: const TextStyle(
+              title: const Text(
+                'ALL SONGS',
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               centerTitle: true,
-              actions: [
-                Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AllSongsPlaylist(playlistModel: widget.playListmodel,)))
-                                .then((value) {
-                              setState(() {});
-                            });
-                        },
-                        icon: const Icon(
-                          Icons.add_circle_outline_rounded,
-                          color: Colors.white,
-                          size: 30,
-                        ))),
-              ],
             ),
             const SizedBox(
               height: 10,
             ),
             Expanded(
                 child: FutureBuilder(
-                    future: playlistSongs(playlist: widget.playListmodel),
+                    future: getAllSongsFromDatabase(),
                     builder: (context, item) {
                       if (item.data == null) {
                         SongFetcher();
@@ -113,17 +90,34 @@ class _OpenPlayListState extends State<OpenPlayList> {
                                   style: const TextStyle(color: Colors.white70),
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                trailing: IconButton(
-                                    onPressed: () {
-                                      removeSongsFromplaylsit(
-                                          songid: item.data![index].musicid,
-                                          playlist: widget.playListmodel);
-                                          setState(() {});
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete_rounded,
-                                      color: Colors.white,
-                                    )),
+                                trailing:songsinPlylist.contains(item.data![index].musicid)?IconButton(onPressed: () {
+                                                    removeSongsFromplaylsit(
+                                                        songid: item
+                                                            .data![index].musicid,
+                                                             playlist: widget.playlistModel);
+                                                    checkSongOnPlaylist(
+                                                        playlist: widget.playlistModel);
+                                                    setState(() {});
+                                                  },
+                                                  icon:const Icon(
+                                                    Icons.check,
+                                                    color: Colors.white,
+                                                  ),):IconButton(onPressed: () {
+                                                    addSongtoPlaylist(
+                                                        songid: item
+                                                            .data![index]
+                                                            .musicid,
+                                                        playlist: widget
+                                                            .playlistModel);
+                                                    checkSongOnPlaylist(
+                                                        playlist: widget
+                                                            .playlistModel);
+                                                    setState(() {});
+                                                  },
+                                                  icon:const Icon(
+                                                    Icons.add,
+                                                    color: Colors.white,
+                                                  )),
                                 onTap: () {
                                   final song = item.data![index];
                                   _navigateToMusicPlayScreen(context, song);
@@ -137,7 +131,6 @@ class _OpenPlayListState extends State<OpenPlayList> {
       ),
     );
   }
-
   void _navigateToMusicPlayScreen(BuildContext context, SongMusic song) {
     Navigator.push(
       context,
