@@ -48,17 +48,17 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       currentSong = song;
     });
     
-    // Add the song to recently played database
+    //  recently played database
     addSongToRecently(song.musicid);
 
-    // Listen for changes in the audio player's duration
+    //  audio player's duration
     _audioPlayer.durationStream.listen((newDuration) {
       setState(() {
         duration = newDuration ?? Duration.zero;
       });
     });
 
-    // Listen for changes in the audio player's position
+    //  audio player's position
     _audioPlayer.positionStream.listen((newPosition) {
       setState(() {
         position = newPosition;
