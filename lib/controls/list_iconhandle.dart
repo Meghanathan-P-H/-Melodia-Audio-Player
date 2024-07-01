@@ -3,8 +3,13 @@ import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 
-void handleActionBotton(BuildContext context, String action, int index,
-    SongMusic song, Function(void Function()) setState,) async {
+void handleActionBotton(
+  BuildContext context,
+  String action,
+  int index,
+  SongMusic song,
+  Function(void Function()) setState,
+) async {
   final scaffoldMessenger = ScaffoldMessenger.of(context);
   switch (action) {
     case 'play':
@@ -40,7 +45,7 @@ void handleActionBotton(BuildContext context, String action, int index,
       );
       break;
     case 'playlist':
-      showPlaylistBottomSheet(context,songId: song.musicid);
+      showPlaylistBottomSheet(context, songId: song.musicid);
       await checkplaylistNames();
 
       break;
@@ -81,35 +86,6 @@ void showPlaylistBottomSheet(BuildContext context,
                   color: Colors.white,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.0200),
-                // GestureDetector(
-                //   onTap: () {
-                //     // checkplaylistNames();
-                //     showCreatePlaylistBar(context);
-                //   },
-                //   child: Row(
-                //     children: [
-                //       Container(
-                //         padding: EdgeInsets.all(
-                //             MediaQuery.of(context).size.width * 0.03),
-                //         decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(
-                //                 MediaQuery.of(context).size.width * 0.03),
-                //             color: Colors.white),
-                //         child: const Icon(
-                //           Icons.add,
-                //           color: Colors.black,
-                //         ),
-                //       ),
-                //       SizedBox(
-                //           width: MediaQuery.of(context).size.width * 0.0500),
-                //       const Text(
-                //         "CREATE NEW PLAYLIST",
-                //         style: TextStyle(fontSize: 15, color: Colors.white),
-                //       )
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(height: MediaQuery.of(context).size.height * 0.020),
                 Expanded(
                   child: FutureBuilder(
                     future: getSongsFromPlaylist(),
@@ -126,7 +102,7 @@ void showPlaylistBottomSheet(BuildContext context,
                         }
                         allPlayLists.removeWhere((playlist) =>
                             playlist ==
-                            "Favorites"); // Remove Favorites from the list
+                            "Favorites"); 
                         return ListView.builder(
                           itemCount: allPlayLists.length,
                           itemBuilder: ((context, index) {
@@ -200,7 +176,8 @@ void showPlaylistBottomSheet(BuildContext context,
   );
 }
 
-void showCreatePlaylistBar(BuildContext context,[Function()? refreshPlaylists]) {
+void showCreatePlaylistBar(BuildContext context,
+    [Function()? refreshPlaylists]) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -209,7 +186,8 @@ void showCreatePlaylistBar(BuildContext context,[Function()? refreshPlaylists]) 
         data: ThemeData(dialogBackgroundColor: Colors.transparent),
         child: Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(16.0), // Adjust the padding as needed
+          insetPadding:
+              const EdgeInsets.all(16.0), 
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -268,7 +246,8 @@ void showCreatePlaylistBar(BuildContext context,[Function()? refreshPlaylists]) 
                                 style: TextStyle(color: Colors.white),
                               )),
                           SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.0655),
+                              width:
+                                  MediaQuery.of(context).size.width * 0.0655),
                           TextButton(
                               onPressed: () async {
                                 await addToPlaylist(
