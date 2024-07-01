@@ -6,7 +6,6 @@ import 'package:melodia_audioplayer/screens/playlsitopen.dart';
 import 'package:melodia_audioplayer/screens/recentlyplay_screen.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
 
-
 class ScreenPlayList extends StatefulWidget {
   const ScreenPlayList({super.key});
 
@@ -31,152 +30,168 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
               colors: [Color(0xFF7D7D7D), Color(0xED262626)])),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            AppBar(
-              backgroundColor: Colors.transparent,
-              title: const Text('My Playlist',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26)),
-              centerTitle: true,
-              actions: [
-                IconButton(
-                    onPressed: () {
-                       showCreatePlaylistBar(context, refreshPlaylists);
-                    },
-                    icon: const Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: Colors.white,
-                      size: 36,
-                    ))
-              ],
+        appBar: _buildAppBar(context),
+        body: _buildBody(),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      title: const Text(
+        'My Playlist',
+        style: TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 26),
+      ),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          onPressed: () {
+            showCreatePlaylistBar(context, refreshPlaylists);
+          },
+          icon: const Icon(
+            Icons.add_circle_outline_rounded,
+            color: Colors.white,
+            size: 36,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      children: [
+        SizedBox(width: MediaQuery.of(context).size.width * 0.0267),
+        Expanded(
+          child: FutureBuilder<List<PlayListmodel>>(
+            future: getSongsFromPlaylist(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error loading playlists'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('No playlists found'));
+              } else {
+                List<String> allPlaylist = List.from(playlistNames);
+                allPlaylist.addAll(snapshot.data!.map((e) => e.name));
+                return _buildGridView(allPlaylist, snapshot.data!);
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  GridView _buildGridView(List<String> allPlaylist, List<PlayListmodel> playlists) {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: MediaQuery.of(context).size.width * 0.08,
+        mainAxisSpacing: MediaQuery.of(context).size.width * 0.08,
+      ),
+      itemCount: allPlaylist.length,
+      itemBuilder: (context, index) {
+        PlayListmodel? currentPlaylist;
+        if (index >= playlistNames.length) {
+          currentPlaylist = playlists[index - playlistNames.length];
+        }
+        return _buildPlaylistContainer(
+          allPlaylist[index],
+          index < playlistNames.length,
+          index,
+          currentPlaylist,
+        );
+      },
+    );
+  }
+
+  Widget _buildPlaylistContainer(
+      String title, bool isInitialPlaylist, int index, PlayListmodel? playlist) {
+    bool showMoreOption = title != "Recently played";
+
+    return InkWell(
+      onTap: () {
+        if (title == "Recently played") {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const RecentlyScreen(),
             ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.0267),
-            Expanded(
-                child: FutureBuilder(
-                    future: getSongsFromPlaylist(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data == null) {
-                        return const CircularProgressIndicator();
-                      } else {
-                        List<String> allPlaylist = List.from(playlistNames);
-                        allPlaylist.addAll(snapshot.data!.map((e) => e.name));
-                        return GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing:
-                                MediaQuery.of(context).size.width * 0.08,
-                            mainAxisSpacing:
-                                MediaQuery.of(context).size.width * 0.08,
-                          ),
-                          itemCount: allPlaylist.length,
-                          itemBuilder: (context, index) {
-                            PlayListmodel? currentplaylist;
-                            if (index < playlistNames.length) {
-                              currentplaylist = null;
-                            } else {
-                              int plid = index - playlistNames.length;
-                              if (plid < snapshot.data!.length) {
-                                currentplaylist = snapshot.data![plid];
-                              } else {
-                                currentplaylist = null;
-                              }
-                            }
-                            return buildContainer(
-                              allPlaylist[index],
-                              index < playlistNames.length,
-                              index,
-                              currentplaylist,
-                            );
-                          },
-                        );
-                      }
-                    }))
+          );
+        } else if (playlist != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => OpenPlayList(
+                playListmodel: playlist,
+                playlistname: title,
+              ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.2667,
+        height: MediaQuery.of(context).size.width * 0.2667,
+        decoration: BoxDecoration(
+          gradient: widgetbackgroundTm(),
+          borderRadius:
+              BorderRadius.circular(MediaQuery.of(context).size.width * 0.04),
+        ),
+        child: Column(
+          mainAxisAlignment: title == "Recently played"
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.start,
+          children: [
+            if (showMoreOption) _buildPopupMenu(index - playlistNames.length),
+            Icon(
+              Icons.music_note,
+              color: Colors.white,
+              size: 48 * MediaQuery.of(context).size.width / 375.0,
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.0125),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-  buildContainer(String title, bool isintialplaylist, int index, PlayListmodel? playlist){
-    bool showmoreoption = true;
-if (title == "Recently played") {
-  showmoreoption = false;
-}
-    return InkWell(
-  onTap: () {
-    if (title == "Recently played") {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>const RecentlyScreen(),
-      ));
-    } else {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => OpenPlayList(
-                  playListmodel: playlist!,
-                  playlistname: title,
-              )));
-    }
-  },
-  child: Container(
-    width: MediaQuery.of(context).size.width * 0.2667,
-    height: MediaQuery.of(context).size.width * 0.2667,
-    decoration: BoxDecoration(
-      gradient: widgetbackgroundTm(),
-      borderRadius:
-          BorderRadius.circular(MediaQuery.of(context).size.width * 0.04),
-    ),
-    child: Column(
-      mainAxisAlignment:
-          (title == "Recently played")
-              ? MainAxisAlignment.center
-              : MainAxisAlignment.start,
-      children: [
-        if (showmoreoption)
-          Align(
-            alignment: Alignment.topRight,
-            child: PopupMenuButton<String>(
-                  onSelected: (value) {
-                    if (value == 'delete') {
-                      showDeleteConfirmationDialog(context, index - playlistNames.length);
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      const PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Text('Delete Playlist'),
-                      ),
-                    ];
-                  },
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                    size: 28 * MediaQuery.of(context).size.width / 375.0,
-                  ),
-                ),
-          ),
-        Icon(
-          Icons.music_note,
+
+  Widget _buildPopupMenu(int index) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: PopupMenuButton<String>(
+        onSelected: (value) {
+          if (value == 'delete') {
+            _showDeleteConfirmationDialog(context, index);
+          }
+        },
+        itemBuilder: (BuildContext context) {
+          return [
+            const PopupMenuItem<String>(
+              value: 'delete',
+              child: Text('Delete Playlist'),
+            ),
+          ];
+        },
+        icon: Icon(
+          Icons.more_vert,
           color: Colors.white,
-          size: 48 * MediaQuery.of(context).size.width / 375.0,
+          size: 28 * MediaQuery.of(context).size.width / 375.0,
         ),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.0125),
-        Text(
-          title,
-          style:const TextStyle(
-            color: Colors.white,
-            fontSize: 14 ,
-          ),
-        ),
-      ],
-    ),
-  ),
-);
-}
-//comment show dialogue
-void showDeleteConfirmationDialog(BuildContext context, int index) {
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, int index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -194,9 +209,7 @@ void showDeleteConfirmationDialog(BuildContext context, int index) {
               onPressed: () {
                 deletePlaylist(index);
                 Navigator.of(context).pop();
-                setState(() {
-                  
-                });
+                setState(() {});
               },
               child: const Text('OK'),
             ),
