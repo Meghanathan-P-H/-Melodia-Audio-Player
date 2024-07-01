@@ -63,28 +63,6 @@ class _RecentlyScreenState extends State<RecentlyScreen> {
     );
   }
 
-  // Padding _buildSearchBar() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //     child: Container(
-  //       height: 60,
-  //       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.circular(30),
-  //       ),
-  //       child: const TextField(
-  //         decoration: InputDecoration(
-  //           hintText: 'Search here',
-  //           hintStyle: TextStyle(color: Colors.black),
-  //           prefixIcon: Icon(Icons.search, color: Colors.black),
-  //           border: InputBorder.none,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildSongList(List<SongMusic> displayedMusics) {
     if (displayedMusics.isEmpty) {
       return const Expanded(
