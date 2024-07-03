@@ -68,7 +68,9 @@ Future<List<SongMusic>> favoriteSongList() async {
   return favSongs;
 }
 
-// <---Recently Plays Fuctions--->
+// <--- PlayList Fuctions--->
+
+
 Future<void> addToPlaylist(
     {required String name, required List<int> songid}) async {
   final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
@@ -138,6 +140,16 @@ Future<void> removeSongsFromplaylsit(
     pb.songid.remove(songid);
     playListDb.put(playlist.key, pb);
     debugPrint("$songid removed");
+  }
+}
+
+Future<void> renameplaylist(
+    {required PlayListmodel playlist, required String newname}) async {
+  final playListDb = await Hive.openBox<PlayListmodel>('playlist_db');
+  final storedPlaylist = playListDb.get(playlist.key);
+  if (storedPlaylist != null) {
+    storedPlaylist.name = newname;
+    playListDb.put(playlist.key, storedPlaylist);
   }
 }
 

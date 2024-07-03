@@ -145,7 +145,7 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
               ? MainAxisAlignment.center
               : MainAxisAlignment.start,
           children: [
-            if (showMoreOption) _buildPopupMenu(index - playlistNames.length),
+            if (showMoreOption) _buildPopupMenu(index - playlistNames.length, playlist),
             Icon(
               Icons.music_note,
               color: Colors.white,
@@ -165,13 +165,17 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
     );
   }
 
-  Widget _buildPopupMenu(int index) {
+  Widget _buildPopupMenu(int index, PlayListmodel? playlist) {
     return Align(
       alignment: Alignment.topRight,
       child: PopupMenuButton<String>(
         onSelected: (value) {
           if (value == 'delete') {
             _showDeleteConfirmationDialog(context, index);
+          } else if (value == 'rename') {
+            if (playlist != null) {
+              _showRenameDialog(context, playlist);
+            }
           }
         },
         itemBuilder: (BuildContext context) {
@@ -179,6 +183,10 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
             const PopupMenuItem<String>(
               value: 'delete',
               child: Text('Delete Playlist'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'rename',
+              child: Text('Rename Playlist'),
             ),
           ];
         },
@@ -212,6 +220,43 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
                 setState(() {});
               },
               child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showRenameDialog(BuildContext context, PlayListmodel playlist) {
+    final TextEditingController controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Rename Playlist'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Enter new name'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final newName = controller.text;
+                if (newName.isNotEmpty) {
+                  await renameplaylist(playlist: playlist, newname: newName);
+                  setState(() {}); // Refresh the UI
+                }
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pop();
+              },
+              child: const Text('Rename'),
             ),
           ],
         );

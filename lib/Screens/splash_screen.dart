@@ -45,8 +45,8 @@ class _SplashScreenState extends State<SplashScreen> {
 //Build the Main Logo
   Widget _buildLogo() {
     return Container(
-      padding: const EdgeInsets.all(10.0),
-      margin: const EdgeInsets.only(bottom: 20.0),
+      padding: const EdgeInsets.all(5.0),
+      margin: const EdgeInsets.only(bottom: 5.0),
       height: 240,
       width: 290,
       child: Image.asset('asset/images/MelodiaLogo.png', fit: BoxFit.cover),
