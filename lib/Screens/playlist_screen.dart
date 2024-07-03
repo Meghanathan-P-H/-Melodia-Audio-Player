@@ -86,7 +86,8 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
     );
   }
 
-  GridView _buildGridView(List<String> allPlaylist, List<PlayListmodel> playlists) {
+  GridView _buildGridView(
+      List<String> allPlaylist, List<PlayListmodel> playlists) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -109,8 +110,8 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
     );
   }
 
-  Widget _buildPlaylistContainer(
-      String title, bool isInitialPlaylist, int index, PlayListmodel? playlist) {
+  Widget _buildPlaylistContainer(String title, bool isInitialPlaylist,
+      int index, PlayListmodel? playlist) {
     bool showMoreOption = title != "Recently played";
 
     return InkWell(
@@ -145,7 +146,8 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
               ? MainAxisAlignment.center
               : MainAxisAlignment.start,
           children: [
-            if (showMoreOption) _buildPopupMenu(index - playlistNames.length, playlist),
+            if (showMoreOption)
+              _buildPopupMenu(index - playlistNames.length, playlist),
             Icon(
               Icons.music_note,
               color: Colors.white,
@@ -229,36 +231,100 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
 
   void _showRenameDialog(BuildContext context, PlayListmodel playlist) {
     final TextEditingController controller = TextEditingController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Rename Playlist'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(hintText: 'Enter new name'),
+        TextEditingController createController = TextEditingController();
+        return Theme(
+          data: ThemeData(dialogBackgroundColor: Colors.transparent),
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.35,
+                  maxWidth: MediaQuery.of(context).size.width * 0.7,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * 0.02),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.0375),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text(
+                          'Rename Playlist',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.025),
+                        TextField(
+                          controller: controller,
+                          onChanged: (value) {
+                            if (value.length <= 10) {
+                            } else {
+                              createController.text = value.substring(0, 15);
+                            }
+                          },
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Enter new name',
+                            hintStyle: const TextStyle(
+                                color: Colors.white, fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                  MediaQuery.of(context).size.width * 0.02),
+                              borderSide: const BorderSide(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 0.03125),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.0655),
+                            TextButton(
+                                onPressed: () async {
+                                  final newName = controller.text;
+                                  if (newName.isNotEmpty) {
+                                    await renameplaylist(
+                                        playlist: playlist, newname: newName);
+                                    setState(() {});
+                                  }
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  'Save',
+                                  style: TextStyle(color: Colors.white),
+                                ))
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final newName = controller.text;
-                if (newName.isNotEmpty) {
-                  await renameplaylist(playlist: playlist, newname: newName);
-                  setState(() {}); // Refresh the UI
-                }
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).pop();
-              },
-              child: const Text('Rename'),
-            ),
-          ],
         );
       },
     );

@@ -38,9 +38,10 @@ class _ScreenFavoriteState extends State<ScreenFavorite> {
             body: Column(
               children: [
                 _buildAppBar(),
-                const SizedBox(height: 15),
-                _buildSearchBar(),
-                const SizedBox(height: 15),
+                const Divider(height: 1,),
+                const SizedBox(height: 10),
+                // _buildSearchBar(),
+                // const SizedBox(height: 15),
                 _buildSongList(displayedMusics),
               ],
             ),
@@ -65,27 +66,27 @@ class _ScreenFavoriteState extends State<ScreenFavorite> {
     );
   }
 
-  Padding _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: const TextField(
-          decoration: InputDecoration(
-            hintText: 'Search here',
-            hintStyle: TextStyle(color: Colors.black),
-            prefixIcon: Icon(Icons.search, color: Colors.black),
-            border: InputBorder.none,
-          ),
-        ),
-      ),
-    );
-  }
+  // Padding _buildSearchBar() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //     child: Container(
+  //       height: 60,
+  //       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(30),
+  //       ),
+  //       child: const TextField(
+  //         decoration: InputDecoration(
+  //           hintText: 'Search here',
+  //           hintStyle: TextStyle(color: Colors.black),
+  //           prefixIcon: Icon(Icons.search, color: Colors.black),
+  //           border: InputBorder.none,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildSongList(List<SongMusic> displayedMusics) {
     if (displayedMusics.isEmpty) {

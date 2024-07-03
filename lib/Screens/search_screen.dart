@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
@@ -16,6 +18,8 @@ class _ScreenSearchState extends State<ScreenSearch> {
   List<SongMusic> allMusics = [];
   List<SongMusic> displayedMusics = [];
   TextEditingController searchController = TextEditingController();
+  FocusNode searchFocusNode = FocusNode();
+  Timer? _unfocusTimer;
 
   @override
   void initState() {
@@ -35,11 +39,17 @@ class _ScreenSearchState extends State<ScreenSearch> {
 
   void _searchSongs() {
     final searchText = searchController.text.toLowerCase();
+    _unfocusTimer?.cancel();
 
     if (searchText.isEmpty) {
       setState(() {
         displayedMusics = List.from(allMusics);
       });
+       _unfocusTimer = Timer(const Duration(seconds: 10), () {
+      if (searchController.text.isEmpty) {
+        searchFocusNode.unfocus();
+      }
+    });
     } else {
       List<SongMusic> matchedSongs = [];
       for (var song in allMusics) {
@@ -54,17 +64,34 @@ class _ScreenSearchState extends State<ScreenSearch> {
       });
     }
   }
+  
+  @override
+void dispose() {
+  _unfocusTimer?.cancel();
+  searchController.dispose();
+  searchFocusNode.dispose();
+  super.dispose();
+}
 
- 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(gradient: backgroundTheme()),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(
-          children: [_buildAppbar(), _buildSearchContent(), _buildSongList()],
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        if (searchFocusNode.hasFocus) {
+          searchFocusNode.unfocus();
+          return false; // Prevent the back button from closing the screen
+        }
+        return true; // Allow the back button to close the screen
+      },
+      child: Container(
+        decoration: BoxDecoration(gradient: backgroundTheme()),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Column(
+            children: [_buildAppbar(), _buildSearchContent(), _buildSongList()],
+          ),
         ),
       ),
     );
@@ -116,6 +143,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
             color: Colors.white, borderRadius: BorderRadius.circular(30)),
         child: TextField(
           controller: searchController,
+          focusNode: searchFocusNode,
           onChanged: (value) {
             _searchSongs();
           },
@@ -199,6 +227,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
                         builder: (context) => ScreenMusicPlay(song: song),
                       ),
                     );
+                     searchFocusNode.unfocus();
                   },
                 );
               },
