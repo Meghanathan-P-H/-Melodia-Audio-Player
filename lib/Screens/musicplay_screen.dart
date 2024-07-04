@@ -42,36 +42,43 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   }
 
   Future<void> _playSong(SongMusic song) async {
-    await _audioPlayer.setUrl(song.uri);
-    _audioPlayer.play();
+  await _audioPlayer.setUrl(song.uri);
+  _audioPlayer.play();
+  if (mounted) {
     setState(() {
       _isPlaying = true;
       currentSong = song;
     });
+  }
 
-    //  recently played database
-    addSongToRecently(song.musicid);
+  //  recently played database
+  addSongToRecently(song.musicid);
 
-    //  audio player's duration
-    _audioPlayer.durationStream.listen((newDuration) {
+  //  audio player's duration
+  _audioPlayer.durationStream.listen((newDuration) {
+    if (mounted) {
       setState(() {
         duration = newDuration ?? Duration.zero;
       });
-    });
+    }
+  });
 
-    //  audio player's position
-    _audioPlayer.positionStream.listen((newPosition) {
+  //  audio player's position
+  _audioPlayer.positionStream.listen((newPosition) {
+    if (mounted) {
       setState(() {
         position = newPosition;
       });
-    });
+    }
+  });
 
-    _audioPlayer.playerStateStream.listen((playerState) {
-      if (playerState.processingState == ProcessingState.completed) {
-        _playNextSong();
-      }
-    });
-  }
+  _audioPlayer.playerStateStream.listen((playerState) {
+    if (playerState.processingState == ProcessingState.completed) {
+      _playNextSong();
+    }
+  });
+}
+
 
   void _playPause() {
     if (_isPlaying) {
