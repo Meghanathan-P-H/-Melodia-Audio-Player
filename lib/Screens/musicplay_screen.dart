@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:melodia_audioplayer/controls/backgroundplay.dart';
 import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
@@ -16,7 +17,7 @@ class ScreenMusicPlay extends StatefulWidget {
 }
 
 class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  // final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
   bool _isShuffling = false;
   bool _isLooping = false;
@@ -42,8 +43,8 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   }
 
   Future<void> _playSong(SongMusic song) async {
-  await _audioPlayer.setUrl(song.uri);
-  _audioPlayer.play();
+  await AudioPlayerService().audioPlayer.setUrl(song.uri);
+  AudioPlayerService().audioPlayer.play();
   if (mounted) {
     setState(() {
       _isPlaying = true;
@@ -55,7 +56,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   addSongToRecently(song.musicid);
 
   //  audio player's duration
-  _audioPlayer.durationStream.listen((newDuration) {
+  AudioPlayerService().audioPlayer.durationStream.listen((newDuration) {
     if (mounted) {
       setState(() {
         duration = newDuration ?? Duration.zero;
@@ -64,7 +65,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
   });
 
   //  audio player's position
-  _audioPlayer.positionStream.listen((newPosition) {
+  AudioPlayerService().audioPlayer.positionStream.listen((newPosition) {
     if (mounted) {
       setState(() {
         position = newPosition;
@@ -72,7 +73,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     }
   });
 
-  _audioPlayer.playerStateStream.listen((playerState) {
+  AudioPlayerService().audioPlayer.playerStateStream.listen((playerState) {
     if (playerState.processingState == ProcessingState.completed) {
       _playNextSong();
     }
@@ -80,16 +81,17 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
 }
 
 
+
   void _playPause() {
-    if (_isPlaying) {
-      _audioPlayer.pause();
-    } else {
-      _audioPlayer.play();
-    }
-    setState(() {
-      _isPlaying = !_isPlaying;
-    });
+  if (_isPlaying) {
+    AudioPlayerService().audioPlayer.pause();
+  } else {
+    AudioPlayerService().audioPlayer.play();
   }
+  setState(() {
+    _isPlaying = !_isPlaying;
+  });
+}
 
   void _toggleShuffle() {
     setState(() {
@@ -107,7 +109,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     setState(() {
       _isLooping = !_isLooping;
     });
-    _audioPlayer.setLoopMode(_isLooping ? LoopMode.one : LoopMode.off);
+    AudioPlayerService().audioPlayer.setLoopMode(_isLooping ? LoopMode.one : LoopMode.off);
   }
 
   String formatTime(Duration duration) {
@@ -311,7 +313,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
               value: position.inSeconds.toDouble(),
               onChanged: (value) async {
                 final position = Duration(seconds: value.toInt());
-                await _audioPlayer.seek(position);
+                await AudioPlayerService().audioPlayer.seek(position);
               },
             ),
           ),
@@ -384,9 +386,9 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     );
   }
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  // AudioPlayerService().audioPlayer.dispose();
+  //   super.dispose();
+  // }
 }
