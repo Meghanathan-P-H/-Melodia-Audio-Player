@@ -18,8 +18,6 @@ class _ScreenSearchState extends State<ScreenSearch> {
   List<SongMusic> allMusics = [];
   List<SongMusic> displayedMusics = [];
   TextEditingController searchController = TextEditingController();
-  FocusNode searchFocusNode = FocusNode();
-  Timer? _unfocusTimer;
 
   @override
   void initState() {
@@ -39,17 +37,10 @@ class _ScreenSearchState extends State<ScreenSearch> {
 
   void _searchSongs() {
     final searchText = searchController.text.toLowerCase();
-    _unfocusTimer?.cancel();
-
     if (searchText.isEmpty) {
       setState(() {
         displayedMusics = List.from(allMusics);
       });
-       _unfocusTimer = Timer(const Duration(seconds: 10), () {
-      if (searchController.text.isEmpty) {
-        searchFocusNode.unfocus();
-      }
-    });
     } else {
       List<SongMusic> matchedSongs = [];
       for (var song in allMusics) {
@@ -64,34 +55,16 @@ class _ScreenSearchState extends State<ScreenSearch> {
       });
     }
   }
-  
-  @override
-void dispose() {
-  _unfocusTimer?.cancel();
-  searchController.dispose();
-  searchFocusNode.dispose();
-  super.dispose();
-}
-
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
-    return WillPopScope(
-      onWillPop: () async {
-        if (searchFocusNode.hasFocus) {
-          searchFocusNode.unfocus();
-          return false; // Prevent the back button from closing the screen
-        }
-        return true; // Allow the back button to close the screen
-      },
-      child: Container(
-        decoration: BoxDecoration(gradient: backgroundTheme()),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(
-            children: [_buildAppbar(), _buildSearchContent(), _buildSongList()],
-          ),
+    return Container(
+      decoration: BoxDecoration(gradient: backgroundTheme()),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [_buildAppbar(), _buildSearchContent(), _buildSongList()],
         ),
       ),
     );
@@ -132,33 +105,47 @@ void dispose() {
 
   // Build the Search Bar
   Positioned _buildSearchBar() {
-    return Positioned(
-      left: 16,
-      right: 16,
-      bottom: 1,
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(30)),
-        child: TextField(
-          controller: searchController,
-          focusNode: searchFocusNode,
-          onChanged: (value) {
-            _searchSongs();
-          },
-          decoration: const InputDecoration(
-              hintText: 'Search here',
-              hintStyle: TextStyle(color: Colors.black),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              border: InputBorder.none),
+  return Positioned(
+    left: 16,
+    right: 16,
+    bottom: 1,
+    child: Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: TextField(
+        controller: searchController,
+        onChanged: (value) {
+          _searchSongs();
+        },
+        decoration: InputDecoration(
+          hintText: 'Search here',
+          hintStyle: const TextStyle(color: Colors.black),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: Colors.black,
+          ),
+          suffixIcon: IconButton(
+            icon: const Icon(
+              Icons.close,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              searchController.clear();
+              _searchSongs(); // Call the search function to update the UI
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+          ),
+          border: InputBorder.none,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   // Listing all songs in this widget
   Widget _buildSongList() {
@@ -168,6 +155,7 @@ void dispose() {
               child:
                   Text('No songs found', style: TextStyle(color: Colors.white)))
           : ListView.builder(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: EdgeInsets.zero,
               itemCount: displayedMusics.length,
               itemBuilder: (context, index) {
@@ -227,7 +215,7 @@ void dispose() {
                         builder: (context) => ScreenMusicPlay(song: song),
                       ),
                     );
-                     searchFocusNode.unfocus();
+                    FocusManager.instance.primaryFocus?.unfocus();
                   },
                 );
               },

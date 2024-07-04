@@ -72,12 +72,12 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return const Center(child: Text('Error loading playlists'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No playlists found'));
               } else {
                 List<String> allPlaylist = List.from(playlistNames);
-                allPlaylist.addAll(snapshot.data!.map((e) => e.name));
-                return _buildGridView(allPlaylist, snapshot.data!);
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  allPlaylist.addAll(snapshot.data!.map((e) => e.name));
+                }
+                return _buildGridView(allPlaylist, snapshot.data ?? []);
               }
             },
           ),

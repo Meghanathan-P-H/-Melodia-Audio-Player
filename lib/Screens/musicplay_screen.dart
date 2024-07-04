@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
@@ -47,7 +48,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
       _isPlaying = true;
       currentSong = song;
     });
-    
+
     //  recently played database
     addSongToRecently(song.musicid);
 
@@ -146,6 +147,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     return Container(
       decoration: BoxDecoration(gradient: backgroundTheme()),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: _buildAppBar(),
         body: _buildBody(),
@@ -280,7 +282,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
                 icon: const Icon(Icons.playlist_add),
                 color: Colors.white,
                 onPressed: () {
-                  // Implement playlist addition functionality
+                  showPlaylistBottomSheet(context, songId: currentSong.musicid);
                 },
               ),
             ],
@@ -327,9 +329,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
             children: [
               IconButton(
                 icon: Icon(
-                  _isLooping
-                      ? Icons.repeat_one
-                      : Icons.repeat_rounded,
+                  _isLooping ? Icons.repeat_one : Icons.repeat_rounded,
                 ),
                 color: Colors.white,
                 onPressed: _toggleLoop,
