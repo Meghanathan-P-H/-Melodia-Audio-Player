@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
 import 'package:melodia_audioplayer/db_model/db_playlistmodel.dart';
+// import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 import 'package:melodia_audioplayer/screens/playlsitopen.dart';
 import 'package:melodia_audioplayer/screens/recentlyplay_screen.dart';
 import 'package:melodia_audioplayer/widgets/reusing_widgets.dart';
@@ -14,7 +15,7 @@ class ScreenPlayList extends StatefulWidget {
 }
 
 class _ScreenPlayListState extends State<ScreenPlayList> {
-  List<String> playlistNames = ['Recently played'];
+  List<String> playlistNames = ['Now playing', 'Recently played'];
 
   void refreshPlaylists() {
     setState(() {});
@@ -112,7 +113,7 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
 
   Widget _buildPlaylistContainer(String title, bool isInitialPlaylist,
       int index, PlayListmodel? playlist) {
-    bool showMoreOption = title != "Recently played";
+    bool showMoreOption = title != "Recently played" && title != "Now playing";
 
     return InkWell(
       onTap: () {
@@ -122,6 +123,13 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
               builder: (context) => const RecentlyScreen(),
             ),
           );
+        } else if (title == "Now Playing") {
+          // // Navigate to Now Playing screen
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (context) => ScreenMusicPlay(),
+          //   ),
+          // );
         } else if (playlist != null) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -142,14 +150,14 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
               BorderRadius.circular(MediaQuery.of(context).size.width * 0.04),
         ),
         child: Column(
-          mainAxisAlignment: title == "Recently played"
+          mainAxisAlignment: title == "Recently played" || title == "Now playing"
               ? MainAxisAlignment.center
               : MainAxisAlignment.start,
           children: [
             if (showMoreOption)
               _buildPopupMenu(index - playlistNames.length, playlist),
             Icon(
-              Icons.music_note,
+             title == "Now playing" ? Icons.play_circle_outline_rounded : Icons.music_note,
               color: Colors.white,
               size: 48 * MediaQuery.of(context).size.width / 375.0,
             ),
