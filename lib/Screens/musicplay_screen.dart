@@ -42,8 +42,8 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     _playSong(currentSong);
   }
 
-  Future<void> _playSong(SongMusic song) async {
-  await AudioPlayerService().audioPlayer.setUrl(song.uri);
+Future<void> _playSong(SongMusic song) async {
+  await AudioPlayerService().setMediaItem(song.uri, song.name, song.artist,);
   AudioPlayerService().audioPlayer.play();
   if (mounted) {
     setState(() {
@@ -79,6 +79,7 @@ class _ScreenMusicPlayState extends State<ScreenMusicPlay> {
     }
   });
 }
+
 
 
 
