@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:melodia_audioplayer/controls/list_iconhandle.dart';
 import 'package:melodia_audioplayer/db_function/database_functions.dart';
+import 'package:melodia_audioplayer/db_model/db_model.dart';
 import 'package:melodia_audioplayer/db_model/db_playlistmodel.dart';
+import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 // import 'package:melodia_audioplayer/screens/musicplay_screen.dart';
 import 'package:melodia_audioplayer/screens/playlsitopen.dart';
 import 'package:melodia_audioplayer/screens/recentlyplay_screen.dart';
@@ -15,6 +17,7 @@ class ScreenPlayList extends StatefulWidget {
 }
 
 class _ScreenPlayListState extends State<ScreenPlayList> {
+
   List<String> playlistNames = ['Now playing', 'Recently played'];
 
   void refreshPlaylists() {
@@ -116,21 +119,29 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
     bool showMoreOption = title != "Recently played" && title != "Now playing";
 
     return InkWell(
-      onTap: () {
+      onTap: () async{
         if (title == "Recently played") {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const RecentlyScreen(),
             ),
           );
-        } else if (title == "Now Playing") {
-          // // Navigate to Now Playing screen
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => ScreenMusicPlay(),
-          //   ),
-          // );
-        } else if (playlist != null) {
+        } else if (title == "Now playing") {
+      SongMusic? lastRecentlyPlayedSong = await getLastRecentlyPlayedSong();
+      if (lastRecentlyPlayedSong != null) {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ScreenMusicPlay(song: lastRecentlyPlayedSong),
+          ),
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please Play Any Song in Home Screen')),
+        );
+      }
+    } else if (playlist != null) {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => OpenPlayList(

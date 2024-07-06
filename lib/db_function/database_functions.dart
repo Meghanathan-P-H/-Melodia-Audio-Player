@@ -203,3 +203,17 @@ Future<List<SongMusic>> recentlyPlayedSongs() async {
 
   return recents.reversed.toList();
 }
+
+Future<SongMusic?> getLastRecentlyPlayedSong() async {
+  final recentlyDb = await Hive.openBox<RecentlySongsModel>('recently_db');
+  if (recentlyDb.isNotEmpty) {
+    final lastRecentlyPlayed = recentlyDb.values.last;
+    List<SongMusic> allSongs = await getAllSongsFromDatabase();
+    for (SongMusic song in allSongs) {
+      if (song.musicid == lastRecentlyPlayed.songId) {
+        return song;
+      }
+    }
+  }
+  return null;
+}
