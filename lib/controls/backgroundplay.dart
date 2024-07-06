@@ -16,7 +16,7 @@ class AudioPlayerService {
       {String? artwork}) async {
         final artUri = artwork != null && artwork.isNotEmpty
         ? Uri.parse(artwork)
-        : Uri.parse('asset:///assets/images/pngegg.png');
+        : Uri.parse('asset:///images/pngegg.png');
     await audioPlayer.setAudioSource(
       AudioSource.uri(
         Uri.parse(url),
