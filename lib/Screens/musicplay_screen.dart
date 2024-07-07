@@ -178,19 +178,19 @@ Future<void> _playSong(SongMusic song) async {
         ),
       ),
       centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.share,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: const EdgeInsets.only(right: 10),
+      //     child: IconButton(
+      //       onPressed: () {},
+      //       icon: const Icon(
+      //         Icons.share,
+      //         color: Colors.white,
+      //         size: 30,
+      //       ),
+      //     ),
+      //   ),
+      // ],
     );
   }
 
@@ -386,10 +386,4 @@ Future<void> _playSong(SongMusic song) async {
       ),
     );
   }
-
-  // @override
-  // void dispose() {
-  // AudioPlayerService().audioPlayer.dispose();
-  //   super.dispose();
-  // }
 }
