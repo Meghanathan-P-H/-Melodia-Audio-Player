@@ -249,7 +249,7 @@ class _ScreenPlayListState extends State<ScreenPlayList> {
   }
 
   void _showRenameDialog(BuildContext context, PlayListmodel playlist) {
-    final TextEditingController controller = TextEditingController();
+    final TextEditingController controller = TextEditingController(text: playlist.name); 
     showDialog(
       context: context,
       builder: (BuildContext context) {

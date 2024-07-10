@@ -100,9 +100,17 @@ void showPlaylistBottomSheet(BuildContext context,
                           allPlayLists.addAll(
                               snapshot.data!.map((playlist) => playlist.name));
                         }
-                        allPlayLists.removeWhere((playlist) =>
-                            playlist ==
-                            "Favorites"); 
+                        allPlayLists
+                            .removeWhere((playlist) => playlist == "Favorites");
+                        if (allPlayLists.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              'Please create a new playlist\n     on the Playlist screen',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16,fontWeight:FontWeight.bold),
+                            ),
+                          );
+                        }
                         return ListView.builder(
                           itemCount: allPlayLists.length,
                           itemBuilder: ((context, index) {
@@ -186,8 +194,7 @@ void showCreatePlaylistBar(BuildContext context,
         data: ThemeData(dialogBackgroundColor: Colors.transparent),
         child: Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding:
-              const EdgeInsets.all(16.0), 
+          insetPadding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(

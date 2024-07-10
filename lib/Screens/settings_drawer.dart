@@ -29,7 +29,6 @@ class SettingsDrawer extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                
               ),
             ),
           ),
@@ -57,6 +56,14 @@ class SettingsDrawer extends StatelessWidget {
             title: 'RATE US',
             onTap: () {},
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          const Center(
+              child: Text(
+            'Version 1.0',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ))
         ],
       ),
     );
