@@ -61,7 +61,7 @@ class SettingsDrawer extends StatelessWidget {
           ),
           const Center(
               child: Text(
-            'Version 1.0',
+            'Version 1.1',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ))
         ],
