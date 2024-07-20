@@ -128,7 +128,7 @@ Future<void> checkplaylistNames() async {
       debugPrint("playlist name $i - ${playlist.name}");
     }
   }
-  // No need to explicitly close the box here
+  
   // await playListDb.close();
 }
 
